@@ -1,8 +1,26 @@
-@widget wdg function categoricalselector(v::AbstractArray, f=filter; kwargs...)
-    :checkboxes = checkboxes(unique(v); kwargs...)
-    :function = t -> t in $(:checkboxes)
-    @output! wdg f($(:function), v)
+@widget wdg function categoricalselector(v::AbstractArray, f=filter; values=unique(v), value=values, kwargs...)
+    :checkboxes = checkboxes(values; value=value, kwargs...)
+    :function = t -> t in :checkboxes[]
+    @output! wdg ($(:checkboxes); f(:function, v))
     @layout! wdg :checkboxes
+end
+
+@widget wdg function rangeselector(v::AbstractArray{<:Real}, f=filter; digits=6, vskip=1em, min=minimum(v), max=maximum(v), n=50, kwargs...)
+    min = floor(min, digits)
+    max = ceil(max, digits)
+    step = signif((max-min)/n, digits)
+    range = min:step:(max+step)
+    :minimum = spinbox(range, kwargs...)
+    :maximum = spinbox(range, value=range[end], kwargs...)
+    :function = t -> :minimum[] <= t <= :maximum[]
+    @output! wdg ($(:minimum, :changes); $(:maximum, :changes); f(:function, v))
+    @layout! wdg vbox(
+        :minimum,
+        "miminum",
+        CSSUtil.vskip(vskip),
+        :maximum,
+        "maxinum",
+    )
 end
 
 @widget wdg function selector(v::AbstractArray, f=filter; kwargs...)
