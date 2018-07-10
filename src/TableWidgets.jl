@@ -1,5 +1,9 @@
 module TableWidgets
 
-# package code goes here
+using InteractBase, Widgets, CSSUtil, Observables
+
+export categoricalselector
+
+include("selector.jl")
 
 end # module
