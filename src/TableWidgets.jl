@@ -4,7 +4,7 @@ using InteractBase, Widgets, CSSUtil, Observables
 
 using MacroTools
 
-export categoricalselector
+export categoricalselector, rangeselector, selector
 
 include("selector.jl")
 
