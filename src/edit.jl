@@ -1,5 +1,7 @@
 using NamedTuples
 
+# Recipe implementation of Simon Byrne editable table
+
 @widget wdg function editablefield(field, w = widget(field); editing = false)
     :widget = w
     :field = :widget
