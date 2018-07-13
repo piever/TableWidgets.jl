@@ -8,7 +8,7 @@ using NamedTuples
     editing isa Observable || (editing = Observable(editing))
     :editing = editing
     @output! wdg :widget
-    @layout! wdg $(:editing) ? :widget : :field
+    @layout! wdg $(:editing) ? :widget : map(string, :field)
 end
 
 @widget wdg function editbutton(save = x -> nothing; editing = false)
@@ -35,7 +35,7 @@ end
         end
     end
 
-    @layout! wdg Node(^(:tr), Node(^(:td), i), (Node(^(:td), _[el]) for el in ns)..., Node(^(:td), :button))
+    @layout! wdg Node(^(:tr), Node(^(:td), string(i)), (Node(^(:td), _[el]) for el in ns)..., Node(^(:td), :button))
 end
 
 @widget wdg function editabletable(t, lines = 1:min(10, length(t)))
