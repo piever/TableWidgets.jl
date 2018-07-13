@@ -14,9 +14,9 @@ end
     :save = button("Save")
     editing isa Observable || (editing = Observable(editing))
     :editing = editing
-    changestate(x) = (editing[] = !editing[])
-    on(changestate, observe(wdg, :edit))
-    on(x -> (save(x); changestate(x)), observe(wdg, :save))
+    changestate() = (editing[] = !editing[])
+    @on wdg ($(:edit); changestate())
+    @on wdg (save($(:save)); changestate())
     @layout! wdg $(:editing) ? :save : :edit
 end
 
@@ -33,5 +33,18 @@ end
         end
     end
 
-    @layout! wdg Node(^(:tr), (Node(^(:td), _[el]) for el in ns)..., Node(^(:td), :button))
+    @layout! wdg Node(^(:tr), Node(^(:td), i), (Node(^(:td), _[el]) for el in ns)..., Node(^(:td), :button))
+end
+
+@widget wdg function editabletable(t, lines = 1:min(10, length(t)))
+    wdg[:headers] = Node(
+        :tr,
+        Node(:th, pad((:right, :bottom), 1em, "#")),
+        Node.(:th, pad.(((:right, :bottom),), 1em, string.(colnames(t))))...,
+        Node(:th,  pad((:right, :bottom), 1em, "edit"))
+    )
+    for i in lines
+        wdg["row$i"] = editablerow(t, i)
+    end
+    @layout! wdg Node(^(:table), values(wdg.children)...)
 end
