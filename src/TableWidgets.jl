@@ -8,6 +8,7 @@ using MacroTools
 
 export categoricalselector, rangeselector, selector
 
+include("utils.jl")
 include("selector.jl")
 include("edit.jl")
 include("table.jl")
