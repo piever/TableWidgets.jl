@@ -69,12 +69,9 @@ end
     :apply = button("Apply")
     :undo = button("Undo")
     :reset = button("Reset")
-    # on(wdg[:apply]) do x
-    #     observe(wdg, :table)[] = (wdg[:function][])(observe(wdg, :table)[])
-    # end
     @on wdg ($(:apply); :table[] = :function[](:table[]))
-    @on wdg ($(:reset); reset!(wdg))
-    @on wdg ($(:undo); undo!(wdg))
+    @on wdg ($(:reset); reset!(wdg["table"]))
+    @on wdg ($(:undo); undo!(wdg["table"]))
     @output! wdg :table
     @layout! wdg vbox(hbox(:text, :apply, :undo, :reset), :table)
 end

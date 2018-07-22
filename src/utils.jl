@@ -1,4 +1,4 @@
-function parsetext!(wdg::Widgets.AbstractWidget, name = "function"; text = observe(wdg), parse = Base.parse, default = (args...) -> nothing)
+function parsetext!(wdg::Widgets.AbstractWidget, name = "function"; text = observe(wdg), on = text, parse = Base.parse, default = (args...) -> nothing)
     f = default
     try
         @eval f = $(parse(text[]))
@@ -6,8 +6,8 @@ function parsetext!(wdg::Widgets.AbstractWidget, name = "function"; text = obser
     end
     name = Symbol(name)
     wdg[name] = Observable{Any}(f)
-    on(text) do s
-        update_function!(wdg[name], s; parse = parse)
+    InteractBase.on(on) do s
+        update_function!(wdg[name], text[]; parse = parse)
     end
     wdg
 end
@@ -16,5 +16,6 @@ function update_function!(func::Observable, s; parse = Base.parse)
     try
         @eval f = $(parse(s))
         func[] = f
+    catch
     end
 end
