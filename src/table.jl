@@ -70,14 +70,14 @@ end
 
 @widget wdg function manipulatetable(args...; kwargs...)
     :table = displaytable(args...; kwargs...)
-    :text = textarea()
+    :text = textarea(placeholder = "Write transformation to apply to the table")
     parsetext!(wdg; text = observe(wdg, :text))
     :apply = button("Apply")
-    :undo = button("Undo")
-    :reset = button("Reset")
+    :undo = button("Undo", className = "is-warning")
+    :reset = button("Reset", className = "is-danger")
     @on wdg ($(:apply); :table[] = :function[](:table[]))
     @on wdg ($(:reset); reset!(wdg["table"]))
     @on wdg ($(:undo); undo!(wdg["table"]))
     @output! wdg :table
-    @layout! wdg vbox(hbox(:text, :apply, :undo, :reset), :table)
+    @layout! wdg Widgets.div(:text, hbox(:apply, hskip(1em), :undo, hskip(1em), :reset), :table)
 end
