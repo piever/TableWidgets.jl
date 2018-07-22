@@ -27,7 +27,7 @@ end
 
     :body = node("tbody", (wdg["row$i"] for i in 1:length(t))...)
     className = "table $className"
-    @layout! wdg node("table", :head, :body, className=className)
+    @layout! wdg Widgets.div(node("table", :head, :body, className=className), style = Dict("overflow" => "scroll"))
 end
 
 _getindex(t, lines::Colon) = t[:]
