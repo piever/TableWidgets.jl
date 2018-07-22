@@ -26,10 +26,17 @@ end
     @layout! wdg node("table", :head, :body, className=className)
 end
 
-@widget wdg function displaytable(t, lines = 1:min(10, length(Observables._val(t))); kwargs...)
+@widget wdg function displaytable(t, lines = 1:min(10, length(Observables._val(t))); stacksize = 10, kwargs...)
     (t isa Observable) || (t = Observable{Any}(t))
     (lines isa Observable) || (lines = Observable{Any}(lines))
     :lines = lines
+    :backup = copy(t[])
+    :stack = Any[t[]]
+    wdg[:exclude] = on(t) do val
+        push!(wdg[:stack], val)
+        length(wdg[:stack]) > stacksize && popfirst!(wdg[:stack])
+    end
+
     @output! wdg t
     @display! wdg _displaytable($(_.output)[$(:lines)]; kwargs...)
 
@@ -41,4 +48,33 @@ end
     wdg.scope = scp
     @layout! wdg _.scope
     InteractBase.resettheme!()
+end
+
+function reset!(wdg::Widget{:displaytable})
+    observe(wdg)[] = wdg[:backup]
+    wdg
+end
+
+function undo!(wdg::Widget{:displaytable})
+    pop!(wdg[:stack])
+    isempty(wdg[:stack]) && error("Stack is finished, cannot undo any more")
+    Observables.setexcludinghandlers(observe(wdg), last(wdg[:stack]), t -> t != wdg[:exclude])
+    wdg
+end
+
+@widget wdg function manipulatetable(args...; kwargs...)
+    :table = displaytable(args...; kwargs...)
+    :text = textarea()
+    parsetext!(wdg; text = observe(wdg, :text))
+    :apply = button("Apply")
+    :undo = button("Undo")
+    :reset = button("Reset")
+    # on(wdg[:apply]) do x
+    #     observe(wdg, :table)[] = (wdg[:function][])(observe(wdg, :table)[])
+    # end
+    @on wdg ($(:apply); :table[] = :function[](:table[]))
+    @on wdg ($(:reset); reset!(wdg))
+    @on wdg ($(:undo); undo!(wdg))
+    @output! wdg :table
+    @layout! wdg vbox(hbox(:text, :apply, :undo, :reset), :table)
 end

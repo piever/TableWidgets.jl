@@ -1,7 +1,7 @@
 module TableWidgets
 
 using InteractBase, InteractBulma, Widgets, CSSUtil, Observables, IndexedTables, WebIO
-
+using Compat
 import Widgets: node
 
 using MacroTools
