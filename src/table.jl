@@ -1,17 +1,21 @@
 using NamedTuples
 
+function _compact(x)
+    io = IOBuffer()
+    showcompact(io, x)
+    String(io)
+end
 
-@widget wdg function tablerow(i, row; string = true)
-    tostring = string ? Base.string : identity
+@widget wdg function tablerow(i, row; format = _compact)
 	ns = fieldnames(row)
     for el in ns
         wdg[el] = getfield(row, el)
     end
 
-    @layout! wdg node("tr", node("td", tostring(i)), (node("td", tostring(_[el])) for el in ns)...)
+    @layout! wdg node("tr", node("td", format(i)), (node("td", format(_[el])) for el in ns)...)
 end
 
-@widget wdg function _displaytable(t; className = "is-striped is-hoverable is-fullwidth", kwargs...)
+@widget wdg function _displaytable(t; className = "is-striped is-hoverable", kwargs...)
 
     headers = (node("th", string(el)) for el in colnames(t))
 
