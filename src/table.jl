@@ -26,6 +26,7 @@ end
     @layout! wdg node("table", :head, :body, className=className)
 end
 
+_getindex(t, lines::Colon) = t[:]
 function _getindex(t, lines)
     idx = filter(i -> i in 1:length(t), lines)
     getindex(t, idx)
