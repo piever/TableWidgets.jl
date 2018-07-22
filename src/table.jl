@@ -26,6 +26,11 @@ end
     @layout! wdg node("table", :head, :body, className=className)
 end
 
+function _getindex(t, lines)
+    idx = filter(i -> i in 1:length(t), lines)
+    getindex(t, idx)
+end
+
 @widget wdg function displaytable(t, lines = 1:min(10, length(Observables._val(t))); stacksize = 10, kwargs...)
     (t isa Observable) || (t = Observable{Any}(t))
     (lines isa Observable) || (lines = Observable{Any}(lines))
@@ -38,7 +43,7 @@ end
     end
 
     @output! wdg t
-    @display! wdg _displaytable($(_.output)[$(:lines)]; kwargs...)
+    @display! wdg _displaytable(_getindex($(_.output), $(:lines)); kwargs...)
 
     InteractBase.settheme!(Bulma())
     scp = WebIO.Scope()
