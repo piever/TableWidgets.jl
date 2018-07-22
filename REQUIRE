@@ -1,5 +1,6 @@
 julia 0.6
 InteractBase
+InteractBulma
 Widgets
 CSSUtil
 Observables

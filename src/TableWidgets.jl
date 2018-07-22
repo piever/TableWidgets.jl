@@ -1,6 +1,6 @@
 module TableWidgets
 
-using InteractBase, Widgets, CSSUtil, Observables, IndexedTables, WebIO
+using InteractBase, InteractBulma, Widgets, CSSUtil, Observables, IndexedTables, WebIO
 
 import Widgets: node
 
