@@ -12,7 +12,7 @@ isfieldeditable(s::Symbol, edit::AbstractArray) = s in edit
 isfieldeditable(s::Symbol, edit::Symbol) = s == edit
 isfieldeditable(edit) = t -> isfieldeditable(t, edit)
 
-@widget wdg function tablerow(t, i; format = _compact, editing = false, edit = false, widgetfunction = (t, i, el) -> widget(column(t, el)[i]))
+@widget wdg function tablerow(t, i; output = Observable(nothing), format = _compact, editing = false, edit = false, widgetfunction = (t, i, el) -> widget(column(t, el)[i]))
     editing isa Observable || (editing = Observable(editing))
 
     row = t[i]
@@ -31,6 +31,7 @@ isfieldeditable(edit) = t -> isfieldeditable(t, edit)
                     column(t, el)[i] = observe(wdg, string("field_", el))[]
                 end
             end
+            output[] = output[]
         end
     end
 
@@ -52,10 +53,10 @@ end
     @layout! wdg Widgets.div(node("table", :head, :body, className=className), style = Dict("overflow" => "scroll"))
 end
 
-_getindex(t, lines::Colon) = t[:]
-function _getindex(t, lines)
+_view(t, lines::Colon) = t
+function _view(t, lines)
     idx = filter(i -> i in 1:length(t), lines)
-    getindex(t, idx)
+    view(t, idx)
 end
 
 @widget wdg function displaytable(t, lines = 1:min(10, length(Observables._val(t))); stacksize = 10, kwargs...)
@@ -70,7 +71,7 @@ end
     end
 
     @output! wdg t
-    @display! wdg _displaytable(_getindex($(_.output), $(:lines)); kwargs...)
+    @display! wdg _displaytable(_view($(_.output), $(:lines)); output = _.output, kwargs...)
 
     InteractBase.settheme!(Bulma())
     scp = WebIO.Scope()
