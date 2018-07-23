@@ -44,7 +44,7 @@ end
 
     :head = node("tr", node("th", "#"), node.("th", string.(colnames(t)))...) |> node("thead")
 
-    for i in filter(i -> i in 1:length(t), lines)
+    for i in _eachindex(t, lines)
         wdg["row$i"] = tablerow(t, i; kwargs...)
     end
 
@@ -52,6 +52,10 @@ end
     className = "table $className"
     @layout! wdg Widgets.div(node("table", :head, :body, className=className), style = Dict("overflow" => "scroll"))
 end
+
+_eachindex(t, lines) = _eachindex(rows(t)::AbstractArray, lines)
+_eachindex(t::AbstractArray, ::Colon) = eachindex(t)
+_eachindex(t::AbstractArray, lines) = (i for i in lines if checkbounds(Bool, t, i))
 
 displaytable(::Nothing, args...; kwargs...) = nothing
 
