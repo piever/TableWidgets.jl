@@ -98,7 +98,7 @@ end
 @widget wdg function manipulatetable(args...; kwargs...)
     :table = displaytable(args...; kwargs...)
     :text = textarea(placeholder = "Write transformation to apply to the table")
-    parsetext!(wdg; text = observe(wdg, :text))
+    parsetext!(wdg; text = observe(wdg, :text), parse = parsepipeline)
     :apply = button("Apply")
     :undo = button("Undo", className = "is-warning")
     :reset = button("Reset", className = "is-danger")

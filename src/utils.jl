@@ -19,3 +19,12 @@ function update_function!(func::Observable, s; parse = Base.parse)
     catch
     end
 end
+
+function parsepipeline(s)
+    pipeline = """
+    JuliaDBMeta.@apply begin
+        $s
+    end
+    """
+    parse(pipeline)
+end

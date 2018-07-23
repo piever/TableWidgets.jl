@@ -6,5 +6,6 @@ CSSUtil
 Observables
 MacroTools
 WebIO
+JuliaDBMeta
 IndexedTables
 Compat
