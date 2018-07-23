@@ -6,21 +6,32 @@ function _compact(x)
     String(io)
 end
 
-@widget wdg function tablerow(t, i; format = _compact, editing = false, editable = false)
+isfieldeditable(s::Symbol, edit::Bool) = edit
+isfieldeditable(s::Symbol, edit::Function) = edit(s)
+isfieldeditable(s::Symbol, edit::AbstractArray) = s in edit
+isfieldeditable(s::Symbol, edit::Symbol) = s == edit
+isfieldeditable(edit) = t -> isfieldeditable(t, edit)
+
+@widget wdg function tablerow(t, i; output = Observable(nothing), format = _compact, editing = false, edit = false, widgetfunction = (t, i, el) -> widget(column(t, el)[i]))
     editing isa Observable || (editing = Observable(editing))
 
     row = t[i]
 	ns = fieldnames(row)
     for el in ns
         val = getfield(row, el)
-        wdg[string("field_", el)] = editable ? editablefield(val; editing = editing, format = format) : format(val)
+        editable = isfieldeditable(el, edit)
+        wdg[string("field_", el)] =
+            editable ? editablefield(val, widgetfunction(t, i, el); editing = editing, format = format) : format(val)
     end
 
-    if editable
+    if any(isfieldeditable(edit), fieldnames(row))
         wdg[:button] = editbutton(; editing = editing) do x
             for el in ns
-                column(t, el)[i] = observe(wdg, string("field_", el))[]
+                if isfieldeditable(el, edit)
+                    column(t, el)[i] = observe(wdg, string("field_", el))[]
+                end
             end
+            output[] = output[]
         end
     end
 
@@ -42,10 +53,10 @@ end
     @layout! wdg Widgets.div(node("table", :head, :body, className=className), style = Dict("overflow" => "scroll"))
 end
 
-_getindex(t, lines::Colon) = t[:]
-function _getindex(t, lines)
+_view(t, lines::Colon) = t
+function _view(t, lines)
     idx = filter(i -> i in 1:length(t), lines)
-    getindex(t, idx)
+    view(t, idx)
 end
 
 @widget wdg function displaytable(t, lines = 1:min(10, length(Observables._val(t))); stacksize = 10, kwargs...)
@@ -60,7 +71,7 @@ end
     end
 
     @output! wdg t
-    @display! wdg _displaytable(_getindex($(_.output), $(:lines)); kwargs...)
+    @display! wdg _displaytable(_view($(_.output), $(:lines)); output = _.output, kwargs...)
 
     InteractBase.settheme!(Bulma())
     scp = WebIO.Scope()

@@ -13,5 +13,6 @@ include("utils.jl")
 include("selector.jl")
 include("table.jl")
 include("edit.jl")
+include("finance.jl")
 
 end # module

@@ -26,7 +26,7 @@ end
 @widget wdg function selector(v::AbstractArray, f=filter; kwargs...)
     :textbox = textbox("insert condition")
     func = Observable{Function}(x -> true)
-    on(x -> update_function!(func, x), observe(wdg[:textbox]), parse=parsepredicate)
+    on(x -> update_function!(func, x, parse=parsepredicate), observe(wdg[:textbox]))
     :function = func
     @output! wdg ($(:textbox, :changes); f(:function[], v))
     @layout! wdg :textbox
