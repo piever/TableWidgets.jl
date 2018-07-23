@@ -1,7 +1,7 @@
-isvalid(x) = x isa AbstractString && x != ""
+_isvalid(x) = x isa AbstractString && x != ""
 
 @widget wdg function tablepicker(args...; kwargs...)
     :widget = filepicker(args...; kwargs...)
-    @output! wdg isvalid($(:widget)) ? table(FileIO.load($(:widget))) : nothing
-    @display! wdg displaytable($(_.output))
+    @output! wdg _isvalid($(:widget)) ? loadtable($(:widget)) : nothing
+    @display! wdg Observable{Any}(nothing)
 end
