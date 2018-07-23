@@ -6,13 +6,25 @@ function _compact(x)
     String(io)
 end
 
-@widget wdg function tablerow(i, row; format = _compact)
+@widget wdg function tablerow(t, i; format = _compact, editing = false, editable = false)
+    editing isa Observable || (editing = Observable(editing))
+
+    row = t[i]
 	ns = fieldnames(row)
     for el in ns
-        wdg[el] = getfield(row, el)
+        val = getfield(row, el)
+        wdg[string("field_", el)] = editable ? editablefield(val; editing = editing, format = format) : format(val)
     end
 
-    @layout! wdg node("tr", node("td", format(i)), (node("td", format(_[el])) for el in ns)...)
+    if editable
+        wdg[:button] = editbutton(; editing = editing) do x
+            for el in ns
+                column(t, el)[i] = observe(wdg, string("field_", el))[]
+            end
+        end
+    end
+
+    @layout! wdg node("tr", node("td", format(i)), (node("td", child) for (key, child) in _.children)...)
 end
 
 @widget wdg function _displaytable(t; className = "is-striped is-hoverable", kwargs...)
@@ -21,8 +33,8 @@ end
 
     :head = node("tr", node("th", "#"), node.("th", string.(colnames(t)))...) |> node("thead")
 
-    for (i, line) in enumerate(t)
-        wdg["row$i"] = tablerow(i, line; kwargs...)
+    for i in 1:length(t)
+        wdg["row$i"] = tablerow(t, i; kwargs...)
     end
 
     :body = node("tbody", (wdg["row$i"] for i in 1:length(t))...)
