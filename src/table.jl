@@ -12,7 +12,7 @@ isfieldeditable(s::Symbol, edit::AbstractArray) = s in edit
 isfieldeditable(s::Symbol, edit::Symbol) = s == edit
 isfieldeditable(edit) = t -> isfieldeditable(t, edit)
 
-@widget wdg function tablerow(t, i; format = _compact, editing = false, edit = false)
+@widget wdg function tablerow(t, i; format = _compact, editing = false, edit = false, widgetfunction = (t, i, el) -> widget(column(t, el)[i]))
     editing isa Observable || (editing = Observable(editing))
 
     row = t[i]
@@ -20,7 +20,8 @@ isfieldeditable(edit) = t -> isfieldeditable(t, edit)
     for el in ns
         val = getfield(row, el)
         editable = isfieldeditable(el, edit)
-        wdg[string("field_", el)] = editable ? editablefield(val; editing = editing, format = format) : format(val)
+        wdg[string("field_", el)] =
+            editable ? editablefield(val, widgetfunction(t, i, el); editing = editing, format = format) : format(val)
     end
 
     if any(isfieldeditable(edit), fieldnames(row))
