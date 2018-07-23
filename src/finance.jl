@@ -1,7 +1,7 @@
-financetable(v::AbstractArray; kwargs...) =
-    financetable(table(v, fill("", length(v)), names = [:Comment, :Category]); kwargs...)
+financetable(v::AbstractArray, args...; kwargs...) =
+    financetable(table(v, fill("", length(v)), names = [:Comment, :Category]), args...; kwargs...)
 
-function financetable(t::IndexedTables.AbstractIndexedTable; categories=[""])
+function financetable(t::IndexedTables.AbstractIndexedTable, lines = :; categories=[""])
     obs_table = Observable{Any}(t)
     options = map(t -> union(last(columns(t)), categories), obs_table)
     function widgetfunction(t, i, s)
@@ -9,5 +9,5 @@ function financetable(t::IndexedTables.AbstractIndexedTable; categories=[""])
         val = col[i]
         autocomplete(options, value = val)
     end
-    displaytable(obs_table, edit = :Category, widgetfunction = widgetfunction)
+    displaytable(obs_table, lines, edit = :Category, widgetfunction = widgetfunction)
 end
