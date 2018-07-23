@@ -75,14 +75,12 @@ displaytable(::Void, args...; kwargs...) = nothing
     @output! wdg t
     @display! wdg _displaytable(_view($(_.output), $(:lines)); output = _.output, kwargs...)
 
-    InteractBase.settheme!(Bulma())
     scp = WebIO.Scope()
     InteractBase.slap_design!(scp)
     scp.dom = node("div",  wdg.display)
 
     wdg.scope = scp
     @layout! wdg _.scope
-    InteractBase.resettheme!()
 end
 
 function reset!(wdg::Widget{:displaytable})
