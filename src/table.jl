@@ -38,25 +38,19 @@ isfieldeditable(edit) = t -> isfieldeditable(t, edit)
     @layout! wdg node("tr", node("td", format(i)), (node("td", child) for (key, child) in _.children)...)
 end
 
-@widget wdg function _displaytable(t; className = "is-striped is-hoverable", kwargs...)
+@widget wdg function _displaytable(t, lines; className = "is-striped is-hoverable", kwargs...)
 
     headers = (node("th", string(el)) for el in colnames(t))
 
     :head = node("tr", node("th", "#"), node.("th", string.(colnames(t)))...) |> node("thead")
 
-    for i in 1:length(t)
+    for i in filter(i -> i in 1:length(t), lines)
         wdg["row$i"] = tablerow(t, i; kwargs...)
     end
 
     :body = node("tbody", (wdg["row$i"] for i in 1:length(t))...)
     className = "table $className"
     @layout! wdg Widgets.div(node("table", :head, :body, className=className), style = Dict("overflow" => "scroll"))
-end
-
-_view(t, lines::Colon) = t
-function _view(t, lines)
-    idx = filter(i -> i in 1:length(t), lines)
-    view(t, idx)
 end
 
 displaytable(::Nothing, args...; kwargs...) = nothing
@@ -73,7 +67,7 @@ displaytable(::Nothing, args...; kwargs...) = nothing
     end
 
     @output! wdg t
-    @display! wdg _displaytable(_view($(_.output), $(:lines)); output = _.output, kwargs...)
+    @display! wdg _displaytable($(_.output), $(:lines); output = _.output, kwargs...)
 
     scp = WebIO.Scope()
     InteractBase.slap_design!(scp)
