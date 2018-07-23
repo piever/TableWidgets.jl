@@ -59,6 +59,8 @@ function _view(t, lines)
     view(t, idx)
 end
 
+displaytable(::Void, args...; kwargs...) = nothing
+
 @widget wdg function displaytable(t, lines = 1:min(10, length(Observables._val(t))); stacksize = 10, kwargs...)
     (t isa Observable) || (t = Observable{Any}(t))
     (lines isa Observable) || (lines = Observable{Any}(lines))
