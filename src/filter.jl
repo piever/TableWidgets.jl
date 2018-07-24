@@ -1,4 +1,4 @@
-@widget wdg function addfilter(t)
+@widget wdg function addfilter(t; readout = true)
     t isa Observable || (t = Observable{Any}(t))
     :cols = dropdown(map(colnames, t), label = "Column to filter")
     selectoptions = OrderedDict(
@@ -11,7 +11,7 @@
     :filter = button("Filter")
     function columnlayout(v)
         cols = map(Widgets.div(className = "column"), v)
-        Widgets.div(className = "columns is-multiline", cols...)
+        Widgets.div(className = "columns is-multiline is-mobile", cols...)
     end
     :selectors = deletablelist([], layout = columnlayout)
 
@@ -22,7 +22,7 @@
         :selectors[] = :selectors[]
     end
 
-    @output! wdg t
+    @output! wdg Observable{Any}(t[])
 
     on(observe(wdg[:filter])) do x
         sels = (observe(i)[] for i in observe(wdg[:selectors])[])
@@ -32,5 +32,6 @@
     @layout! wdg Widgets.div(
         Widgets.div(className = "level is-mobile", map(Widgets.div(className="level-item"), [:cols, :selectortype, :button, :filter])...),
         :selectors,
+        toggletable(_.output, readout = true)
     )
 end
