@@ -14,12 +14,12 @@ end
     :maximum = spinbox(range, value=range[end], kwargs...)
     :function = t -> :minimum[] <= t <= :maximum[]
     @output! wdg ($(:minimum, :changes); $(:maximum, :changes); f(:function, v))
-    @layout! wdg vbox(
+    @layout! wdg Widgets.div(
         :minimum,
         "miminum",
         CSSUtil.vskip(vskip),
         :maximum,
-        "maxinum",
+        "maximum",
     )
 end
 
@@ -32,7 +32,7 @@ end
     @layout! wdg :textbox
 end
 
-for s in [:categoricalselector, :rangeselector, :selectr]
+for s in [:categoricalselector, :rangeselector, :selector]
     @eval begin
         @widget wdg function $s(t::IndexedTables.AbstractIndexedTable, c::Symbol, args...; kwargs...)
             :widget = $s(column(t, c), args...; kwargs...)
