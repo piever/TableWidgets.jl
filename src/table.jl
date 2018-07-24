@@ -93,8 +93,9 @@ function undo!(wdg::Widget{:displaytable})
     wdg
 end
 
-@widget wdg function manipulatetable(args...; kwargs...)
+@widget wdg function manipulatetable(args...; readout = true, kwargs...)
     :table = displaytable(args...; kwargs...)
+    wdg[:toggle] = togglecontent(wdg[:table], label = "Show table", value = readout)
     :text = textarea(placeholder = "Write transformation to apply to the table")
     parsetext!(wdg; text = observe(wdg, :text), parse = parsepipeline)
     :apply = button("Apply")
@@ -104,5 +105,5 @@ end
     @on wdg ($(:reset); reset!(wdg["table"]))
     @on wdg ($(:undo); undo!(wdg["table"]))
     @output! wdg :table
-    @layout! wdg Widgets.div(:text, hbox(:apply, hskip(1em), :undo, hskip(1em), :reset), :table)
+    @layout! wdg Widgets.div(:text, hbox(:apply, hskip(1em), :undo, hskip(1em), :reset), :toggle)
 end
