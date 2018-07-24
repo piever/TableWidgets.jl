@@ -32,6 +32,17 @@ end
     @layout! wdg :textbox
 end
 
+for s in [:categoricalselector, :rangeselector, :selectr]
+    @eval begin
+        @widget wdg function $s(t::IndexedTables.AbstractIndexedTable, c::Symbol, args...; kwargs...)
+            :widget = $s(column(t, c), args...; kwargs...)
+            :label = string(c)
+            @output! wdg :widget
+            @layout! wdg Widgets.div(:label, :widget)
+        end
+    end
+end
+
 function parsepredicate(s)
     ismatch(r"^(\s)*$", s) && return :(t -> true)
     expr = parse("_ -> " * s)
