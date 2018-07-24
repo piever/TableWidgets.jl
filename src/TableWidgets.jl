@@ -3,6 +3,7 @@ module TableWidgets
 using InteractBase, InteractBulma, Widgets, CSSUtil, Observables, JuliaDBMeta, IndexedTables, WebIO
 using FileIO, IterableTables
 using Compat
+using DataStructures
 import DataStructures: reset!
 
 using MacroTools
