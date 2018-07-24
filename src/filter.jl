@@ -22,5 +22,4 @@
         Widgets.div(className = "level is-mobile", map(Widgets.div(className="level-item"), [:cols, :selectortype, :button])...),
         map(columnlayout, :selectors)
     )
-
 end
