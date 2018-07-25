@@ -1,12 +1,12 @@
 @widget wdg function addfilter(t; readout = true)
     t isa Observable || (t = Observable{Any}(t))
-    :cols = dropdown(map(colnames, t), label = "Column to filter")
+    :cols = dropdown(map(colnames, t), placeholder = "Column to filter", value = nothing)
     selectoptions = OrderedDict(
         "categorical" => categoricalselector,
         "range" => rangeselector,
         "predicate" => selector
     )
-    :selectortype = dropdown(selectoptions, label = "Selector type")
+    :selectortype = dropdown(selectoptions, placeholder = "Selector type", value = nothing)
     :button = button("Add selector")
     :filter = button("Filter")
     function columnlayout(v)
