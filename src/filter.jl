@@ -13,7 +13,7 @@
         cols = map(Widgets.div(className = "column"), v)
         Widgets.div(className = "columns is-multiline is-mobile", cols...)
     end
-    :selectors = deletablelist([], layout = columnlayout)
+    :selectors = notifications([], layout = columnlayout)
 
     lazymap(f, v) = (f(i) for i in v)
     @on wdg begin
