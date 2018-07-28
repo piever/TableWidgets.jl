@@ -28,11 +28,13 @@ end
 
 for s in [:categoricalselector, :rangeselector, :selector]
     @eval begin
-        @widget wdg function $s(t::IndexedTables.AbstractIndexedTable, c::Symbol, args...; kwargs...)
-            :widget = $s(column(t, c), args...; kwargs...)
-            :label = string(c)
+        function $s(t::IndexedTables.AbstractIndexedTable, c::Symbol, args...; kwargs...)
+            wdg = Widget{$(Widgets.quotenode(s))}()
+            wdg[:widget] = $s(column(t, c), args...; kwargs...)
+            wdg[:label] = string(c)
             @output! wdg :widget
             @layout! wdg Widgets.div(:label, :widget)
+            return wdg
         end
     end
 end
