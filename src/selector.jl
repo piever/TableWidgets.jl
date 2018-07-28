@@ -10,17 +10,10 @@ end
     max = ceil(max, digits)
     step = signif((max-min)/n, digits)
     range = min:step:(max+step)
-    :minimum = spinbox(range, kwargs...)
-    :maximum = spinbox(range, value=range[end], kwargs...)
-    :function = t -> :minimum[] <= t <= :maximum[]
-    @output! wdg ($(:minimum, :changes); $(:maximum, :changes); f(:function, v))
-    @layout! wdg Widgets.div(
-        :minimum,
-        "miminum",
-        CSSUtil.vskip(vskip),
-        :maximum,
-        "maximum",
-    )
+    :range = InteractBase.rangepicker(range; kwargs...)
+    :function = t -> ((min, max) = extrema(:range[]); min <= t <= max)
+    @output! wdg ($(:range, :changes); f(:function, v))
+    @layout! wdg :range
 end
 
 @widget wdg function selector(v::AbstractArray, f=filter; kwargs...)
