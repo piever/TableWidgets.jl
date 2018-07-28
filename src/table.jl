@@ -63,7 +63,7 @@ displaytable(::Nothing, args...; kwargs...) = nothing
     (t isa Observable) || (t = Observable{Any}(t))
     (lines isa Observable) || (lines = Observable{Any}(lines))
     :lines = lines
-    :backup = copy(t[])
+    :backup = table(t[])
     :stack = Any[t[]]
     wdg[:exclude] = on(t) do val
         push!(wdg[:stack], val)
@@ -100,16 +100,16 @@ end
     @layout! wdg :toggle
 end
 
-@widget wdg function manipulatetable(args...; readout = true, kwargs...)
-    :table = toggletable(args...; kwargs...)
+@widget wdg function dataeditor(t, args...; kwargs...)
+    (t isa Observable) || (t = Observable{Any}(t))
+    :input = t
+    @output! wdg Observable{Any}(table(t[]))
+    @display! wdg toggletable(_.output, args...; kwargs...)
     :text = textarea(placeholder = "Write transformation to apply to the table")
     parsetext!(wdg; text = observe(wdg, :text), parse = parsepipeline)
     :apply = button("Apply")
-    :undo = button("Undo", className = "is-warning")
     :reset = button("Reset", className = "is-danger")
-    @on wdg ($(:apply); :table[] = :function[](:table[]))
-    @on wdg ($(:reset); reset!(wdg["table"]))
-    @on wdg ($(:undo); undo!(wdg["table"]))
-    @output! wdg :table
-    @layout! wdg Widgets.div(:text, hbox(:apply, hskip(1em), :undo, hskip(1em), :reset), :table)
+    @on wdg ($(:apply); _.output[] = :function[](:input[]))
+    @on wdg ($(:reset); :text[] = ""; _.output[] = table(t[]))
+    @layout! wdg Widgets.div(:text, hbox(:apply, hskip(1em), :reset), _.display)
 end
