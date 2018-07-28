@@ -15,9 +15,8 @@ end
 
     sel = rangeselector(v)
     @test observe(sel)[] == v
-    observe(sel, :minimum)[] = 2
-    observe(sel, :maximum)[] = 3
-    observe(sel, :minimum, :changes)[] = 4
+    observe(sel, :extrema)[] = [1.8, 3.2]
+    observe(sel, :changes)[] = 4
     sleep(0.1)
     @test observe(sel)[] == [2, 2, 3]
 
