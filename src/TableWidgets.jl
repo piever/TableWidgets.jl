@@ -1,6 +1,7 @@
 module TableWidgets
 
-using InteractBase, InteractBulma, Widgets, CSSUtil, Observables, JuliaDBMeta, IndexedTables, WebIO
+using InteractBase, Widgets, CSSUtil, Observables, JuliaDBMeta, IndexedTables, WebIO
+import InteractBulma
 using Compat
 using DataStructures
 import DataStructures: reset!
@@ -17,7 +18,6 @@ include("utils.jl")
 include("selector.jl")
 include("table.jl")
 include("edit.jl")
-include("input.jl")
 include("filter.jl")
 
 end # module

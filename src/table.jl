@@ -51,18 +51,19 @@ _eachindex(t, lines) = _eachindex(rows(t)::AbstractArray, lines)
 _eachindex(t::AbstractArray, ::Colon) = eachindex(t)
 _eachindex(t::AbstractArray, lines) = (i for i in lines if checkbounds(Bool, t, i))
 
+"""
+`displaytable(t, rows=1:10; undo = true, stacksize = 10)`
+
+Show rows `rows` of table `t` as HTML table. Use `:` to show the whole table. Use `edit=true` to make the rows editable.
+Use `reset!` to restore original table.
+"""
 displaytable(::Nothing, args...; kwargs...) = nothing
 
-@widget wdg function displaytable(t, lines = 1:min(10, length(Observables._val(t))); stacksize = 10, kwargs...)
+@widget wdg function displaytable(t, lines = 1:min(10, length(Observables._val(t))); kwargs...)
     (t isa Observable) || (t = Observable{Any}(t))
     (lines isa Observable) || (lines = Observable{Any}(lines))
     :lines = lines
     :backup = table(t[])
-    :stack = Any[t[]]
-    wdg[:exclude] = on(t) do val
-        push!(wdg[:stack], val)
-        length(wdg[:stack]) > stacksize && popfirst!(wdg[:stack])
-    end
 
     @output! wdg t
     @display! wdg _displaytable($(_.output), $(:lines); output = _.output, kwargs...)
@@ -77,13 +78,6 @@ end
 
 function reset!(wdg::Widget{:displaytable})
     observe(wdg)[] = wdg[:backup]
-    wdg
-end
-
-function undo!(wdg::Widget{:displaytable})
-    pop!(wdg[:stack])
-    isempty(wdg[:stack]) && error("Stack is finished, cannot undo any more")
-    Observables.setexcludinghandlers(observe(wdg), last(wdg[:stack]), t -> t != wdg[:exclude])
     wdg
 end
 

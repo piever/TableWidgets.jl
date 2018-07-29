@@ -28,3 +28,17 @@ function parsepipeline(s)
     """
     parse(pipeline)
 end
+
+function store!(obs::Observable, stack, stacksize)
+    on(obs) do val
+        push!(stack, val)
+        length(stack) > stacksize && popfirst!(stack)
+    end
+end
+
+function undo!(obs::Observable, stack, exclude)
+    pop!(stack)
+    isempty(stack) && error("Stack is finished, cannot undo any more")
+    Observables.setexcludinghandlers(obs, last(stack), t -> t != exclude)
+    wdg
+end
