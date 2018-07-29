@@ -1,11 +1,11 @@
 julia 0.6
-InteractBase
+InteractBase 0.6.0
 InteractBulma
 Widgets
 CSSUtil
 Observables
 MacroTools
-WebIO
+WebIO 0.2.5
 JuliaDBMeta
 IndexedTables
 Compat
