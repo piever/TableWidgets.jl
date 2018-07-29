@@ -1,4 +1,4 @@
-using TableWidgets, Observables, WebIO
+using TableWidgets, Observables, WebIO, Widgets, InteractBase
 using IndexedTables, IterableTables, DataFrames, RDatasets
 @static if VERSION < v"0.7.0-DEV.2005"
     using Base.Test
@@ -50,5 +50,5 @@ end
     wdg2 = displaytable(t, 1:20)
     l2 = children(children(wdg2.display[][:head])[1]) |> length
     @test l2 == 6
-    @test wdg.display[][:body] |> children |> length == 20
+    @test wdg2.display[][:body] |> children |> length == 20
 end
