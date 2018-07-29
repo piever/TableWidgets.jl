@@ -12,7 +12,7 @@ toggletable
 ```@docs
 categoricalselector
 rangeselector
-selector
+TableWidgets.selector
 addfilter
 ```
 

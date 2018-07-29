@@ -1,3 +1,9 @@
+"""
+`addfilter(t; readout = true)`
+
+Create selectors (`categoricalselector`, `rangeselector`, `selector` are supported) and delete them for various
+columns of table `t`. `readout` denotes whether the table will be displayed initially. Outputs the filtered table.
+"""
 @widget wdg function addfilter(t; readout = true)
     t isa Observable || (t = Observable{Any}(t))
     :cols = dropdown(map(colnames, t), placeholder = "Column to filter", value = nothing)

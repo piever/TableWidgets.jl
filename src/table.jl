@@ -52,7 +52,7 @@ _eachindex(t::AbstractArray, ::Colon) = eachindex(t)
 _eachindex(t::AbstractArray, lines) = (i for i in lines if checkbounds(Bool, t, i))
 
 """
-`displaytable(t, rows=1:10; undo = true, stacksize = 10)`
+`displaytable(t, rows=1:10; edit = false)`
 
 Show rows `rows` of table `t` as HTML table. Use `:` to show the whole table. Use `edit=true` to make the rows editable.
 Use `reset!` to restore original table.
@@ -81,6 +81,11 @@ function reset!(wdg::Widget{:displaytable})
     wdg
 end
 
+"""
+`toggletable(t, rows=1:10)`
+
+Same as `displaytable` but the table can be shown or hidden with a toggle switch.
+"""
 @widget wdg function toggletable(args...; readout = true, label = "Show table", kwargs...)
     :table = displaytable(args...; kwargs...)
     wdg[:toggle] = togglecontent(wdg[:table], label = label, value = readout)
@@ -89,12 +94,10 @@ end
 end
 
 """
-`toggletable(t, rows=1:10; undo = true, stacksize = 10)`
+`dataeditor(t)`
 
-Same as `displaytable` but the table can be shown or hidden with a toggle switch.
+Create a textbox to preprocess a table with JuliaDB / JuliaDBMeta: displays the result using `toggletable`.
 """
-function toggletable end
-
 @widget wdg function dataeditor(t, args...; kwargs...)
     (t isa Observable) || (t = Observable{Any}(t))
     :input = t
