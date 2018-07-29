@@ -1,18 +1,12 @@
 using NamedTuples
 
-function _compact(x)
-    io = IOBuffer()
-    showcompact(io, x)
-    String(io)
-end
-
 isfieldeditable(s::Symbol, edit::Bool) = edit
 isfieldeditable(s::Symbol, edit::Function) = edit(s)
 isfieldeditable(s::Symbol, edit::AbstractArray) = s in edit
 isfieldeditable(s::Symbol, edit::Symbol) = s == edit
 isfieldeditable(edit) = t -> isfieldeditable(t, edit)
 
-@widget wdg function tablerow(t, i; output = Observable(nothing), format = _compact, editing = false, edit = false, widgetfunction = (t, i, el) -> widget(column(t, el)[i]))
+@widget wdg function tablerow(t, i; output = Observable(nothing), format = InteractBase.format, editing = false, edit = false, widgetfunction = (t, i, el) -> widget(column(t, el)[i]))
     editing isa Observable || (editing = Observable(editing))
 
     row = t[i]
