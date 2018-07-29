@@ -1,6 +1,7 @@
 module TableWidgets
 
 using InteractBase, Widgets, CSSUtil, Observables, JuliaDBMeta, IndexedTables, WebIO
+import IndexedTables: AbstractIndexedTable
 import InteractBulma
 using Compat
 using DataStructures

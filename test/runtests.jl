@@ -1,4 +1,5 @@
-using TableWidgets, Observables, InteractBase
+using TableWidgets, Observables, WebIO
+using IndexedTables, IterableTables, DataFrames, RDatasets
 @static if VERSION < v"0.7.0-DEV.2005"
     using Base.Test
 else
@@ -38,4 +39,16 @@ end
     sleep(0.1)
     @test obs[] == 1
     @test observe(u)[] == 1
+end
+
+@testset "table" begin
+    iris = RDatasets.dataset("datasets", "iris")
+    t = table(iris)
+    wdg = displaytable(iris)
+    l = WebIO.children(WebIO.children(wdg.display[][:head])[1]) |> length
+    @test l == 6
+    wdg2 = displaytable(t, 1:20)
+    l2 = children(children(wdg2.display[][:head])[1]) |> length
+    @test l2 == 6
+    @test wdg.display[][:body] |> children |> length == 20
 end
