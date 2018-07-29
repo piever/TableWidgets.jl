@@ -81,12 +81,19 @@ function reset!(wdg::Widget{:displaytable})
     wdg
 end
 
-@widget wdg function toggletable(args...; readout = true, kwargs...)
+@widget wdg function toggletable(args...; readout = true, label = "Show table", kwargs...)
     :table = displaytable(args...; kwargs...)
-    wdg[:toggle] = togglecontent(wdg[:table], label = "Show table", value = readout)
+    wdg[:toggle] = togglecontent(wdg[:table], label = label, value = readout)
     @output! wdg :table
     @layout! wdg :toggle
 end
+
+"""
+`toggletable(t, rows=1:10; undo = true, stacksize = 10)`
+
+Same as `displaytable` but the table can be shown or hidden with a toggle switch.
+"""
+function toggletable end
 
 @widget wdg function dataeditor(t, args...; kwargs...)
     (t isa Observable) || (t = Observable{Any}(t))

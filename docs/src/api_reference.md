@@ -4,6 +4,7 @@
 
 ```@docs
 displaytable
+toggletable
 ```
 
 ## Filtering data
