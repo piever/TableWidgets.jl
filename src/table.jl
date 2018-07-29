@@ -32,17 +32,20 @@ isfieldeditable(edit) = t -> isfieldeditable(t, edit)
     @layout! wdg node("tr", node("td", format(i)), (node("td", child) for (key, child) in _.children)...)
 end
 
-@widget wdg function _displaytable(t, lines; className = "is-striped is-hoverable", kwargs...)
+_displaytable(t, lines; kwargs...) = _displaytable(table(t)::AbstractIndexedTable, lines; kwargs...)
+
+@widget wdg function _displaytable(t::AbstractIndexedTable, lines; className = "is-striped is-hoverable", kwargs...)
 
     headers = (node("th", string(el)) for el in colnames(t))
 
     :head = node("tr", node("th", "#"), node.("th", string.(colnames(t)))...) |> node("thead")
 
-    for i in _eachindex(t, lines)
+    ii = _eachindex(t, lines)
+    for i in ii
         wdg["row$i"] = tablerow(t, i; kwargs...)
     end
 
-    :body = node("tbody", (wdg["row$i"] for i in 1:length(t))...)
+    :body = node("tbody", (wdg["row$i"] for i in ii)...)
     className = "table $className"
     @layout! wdg Widgets.div(node("table", :head, :body, className=className), style = Dict("overflow" => "scroll"))
 end
