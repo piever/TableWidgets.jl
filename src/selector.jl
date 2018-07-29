@@ -1,3 +1,10 @@
+"""
+`categoricalselector(v::AbstractArray, f=filter)`
+
+Create as many checkboxes as the unique elements of `v` and use them to select `v`. By default it returns
+a filtered version of `v`: use `categoricalselector(v, map)` to get the boolean vector of whether each element is
+selected
+"""
 @widget wdg function categoricalselector(v::AbstractArray, f=filter; values=unique(v), value=values, kwargs...)
     :checkboxes = checkboxes(values; value=value, kwargs...)
     :function = t -> t in :checkboxes[]
@@ -5,6 +12,13 @@
     @layout! wdg :checkboxes
 end
 
+"""
+`rangeselector(v::AbstractArray, f=filter)`
+
+Create a `rangepicker` as wide as the extrema of `v` and uses to select `v`. By default it returns
+a filtered version of `v`: use `rangeselector(v, map)` to get the boolean vector of whether each element is
+selected
+"""
 @widget wdg function rangeselector(v::AbstractArray{<:Real}, f=filter; digits=6, vskip=1em, min=minimum(v), max=maximum(v), n=50, kwargs...)
     min = floor(min, digits)
     max = ceil(max, digits)
@@ -17,6 +31,14 @@ end
     @layout! wdg :extrema
 end
 
+"""
+`selector(v::AbstractArray, f=filter)`
+
+Create a `textbox` where the user can type in an anonymous function that is used to select `v`. `_` can be used
+to denote the funcion argument, e.g. `_ > 0`. By default it returns
+a filtered version of `v`: use `selector(v, map)` to get the boolean vector of whether each element is
+selected
+"""
 @widget wdg function selector(v::AbstractArray, f=filter; kwargs...)
     :textbox = textbox("insert condition")
     func = Observable{Function}(x -> true)
