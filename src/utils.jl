@@ -29,16 +29,34 @@ function parsepipeline(s)
     parse(pipeline)
 end
 
-function store!(obs::Observable, stack, stacksize)
-    on(obs) do val
-        push!(stack, val)
-        length(stack) > stacksize && popfirst!(stack)
+"""
+`Undo(obs::Observable{T}, stack = T[obs[]]; stacksize = 10) where {T}`
+
+Return a `Undo` object that stores up to `stacksize` past occurences of `Observable` `obs` in `Vector` `stack`.
+(::Undo)() sets the observable `obs` back to its previous state as far as memory permits.
+"""
+struct Undo{T, F}
+    obs::Observable{T}
+    stack::Vector{T}
+    stacksize::Int
+    exclude::F
+
+    function Undo(obs::Observable{T}, stack = T[obs[]]; stacksize = 10) where {T}
+        exclude = on(obs) do val
+            push!(stack, val)
+            length(stack) > stacksize && popfirst!(stack)
+        end
+        new{T, typeof(exclude)}(obs, stack, stacksize, exclude)
     end
 end
+
+Widgets.observe(u::Undo) = u.obs
+
+(u::Undo)() = undo!(u.obs, u.stack, u.exclude)
 
 function undo!(obs::Observable, stack, exclude)
     pop!(stack)
     isempty(stack) && error("Stack is finished, cannot undo any more")
     Observables.setexcludinghandlers(obs, last(stack), t -> t != exclude)
-    wdg
+    obs
 end

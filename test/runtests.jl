@@ -27,3 +27,15 @@ end
     sleep(0.1)
     @test observe(sel)[] == map(t -> t != 2, v)
 end
+
+@testset "undo" begin
+    obs = Observable(1)
+    u = TableWidgets.Undo(obs)
+    obs[] = 2
+    sleep(0.1)
+    @test obs[] == 2
+    u()
+    sleep(0.1)
+    @test obs[] == 1
+    @test observe(u)[] == 1
+end
