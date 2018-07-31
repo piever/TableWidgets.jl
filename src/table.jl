@@ -29,16 +29,16 @@ isfieldeditable(edit) = t -> isfieldeditable(t, edit)
         end
     end
 
-    @layout! wdg node("tr", node("td", format(i)), (node("td", child) for (key, child) in _.children)...)
+    @layout! wdg node("tr", node("td", node("span", format(i), style = Dict("font-weight" => "bold"))),
+        (node("td", child) for (key, child) in _.children)...)
 end
 
 _displaytable(t, lines; kwargs...) = _displaytable(table(t)::AbstractIndexedTable, lines; kwargs...)
 
 @widget wdg function _displaytable(t::AbstractIndexedTable, lines; className = "is-striped is-hoverable", kwargs...)
-
-    headers = (node("th", string(el)) for el in colnames(t))
-
-    :head = node("tr", node("th", "#"), node.("th", string.(colnames(t)))...) |> node("thead")
+    fontweight = (s in IndexedTables.pkeynames(t) ? "bold" : "normal" for s in colnames(t))
+    headers = (node("th", node("span", string(s), style = Dict("font-weight" => f))) for (s, f) in zip(colnames(t), fontweight))
+    :head = node("tr", node("th", ""), headers...) |> node("thead")
 
     ii = _eachindex(t, lines)
     for i in ii
