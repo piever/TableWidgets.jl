@@ -1,3 +1,6 @@
+_onany(f, o::Observable) = InteractBase.on(f, o)
+_onany(f, o) = InteractBase.onany(f, o...)
+
 function parsetext!(wdg::Widgets.AbstractWidget, name = "function"; text = observe(wdg), on = text, parse = Base.parse, default = (args...) -> nothing)
     f = default
     try
@@ -6,7 +9,7 @@ function parsetext!(wdg::Widgets.AbstractWidget, name = "function"; text = obser
     end
     name = Symbol(name)
     wdg[name] = Observable{Any}(f)
-    InteractBase.on(on) do s
+    _onany(on) do s...
         update_function!(wdg[name], text[]; parse = parse)
     end
     wdg
@@ -20,13 +23,21 @@ function update_function!(func::Observable, s; parse = Base.parse)
     end
 end
 
-function parsepipeline(s)
-    pipeline = """
-    JuliaDBMeta.@apply begin
+function _pipeline(s, arg="")
+    """
+    JuliaDBMeta.@apply $arg begin
         $s
     end
     """
-    parse(pipeline)
+end
+
+parsepipeline(s; flatten = false) = parse(_pipeline(s))
+parsepipeline(s, ::Nothing; kwargs...) = parsepipeline(s; kwargs...)
+
+function parsepipeline(s, by; flatten = false)
+    by_sym = gensym(:by)
+    arg = "$by_sym flatten = $flatten"
+    Expr(:block, Expr(:(=), by_sym, by), parsepipeline(s, arg))
 end
 
 """
