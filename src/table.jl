@@ -114,7 +114,7 @@ Create a textbox to preprocess a table with JuliaDB / JuliaDBMeta: displays the 
     parsetext!(wdg; text = observe(wdg, :text), on = (observe(wdg, :text)), parse =parsepipeline)
     :apply = button("Apply")
     :reset = button("Reset", className = "is-danger")
-    @on wdg ($(:apply); _.output[] = :by[] === nothing ? :function[](:input[]) : groupby(:function[], :input[], :by[]; flatten = :flatten[]))
+    @on wdg ($(:apply); _.output[] = :by[] === nothing ? :function[](:input[]) : groupby(:function[], :input[], Tuple(:by[]); flatten = :flatten[]))
     @on wdg ($(:reset); :text[] = ""; _.output[] = table(t[]))
     @layout! wdg Widgets.div(:text, :by_toggle, hbox(:apply, hskip(1em), :reset), _.display)
 end
