@@ -29,7 +29,6 @@ function _pipeline(s)
 end
 
 parsepipeline(s) = parse(_pipeline(s))
-parsepipeline(s, ::Nothing; kwargs...) = parsepipeline(s; kwargs...)
 
 """
 `Undo(obs::Observable{T}, stack = T[obs[]]; stacksize = 10) where {T}`
