@@ -107,10 +107,14 @@ Create a textbox to preprocess a table with JuliaDB / JuliaDBMeta: displays the 
     @output! wdg Observable{Any}(table(t[]))
     @display! wdg toggletable(_.output, args...; kwargs...)
     :text = textarea(placeholder = "Write transformation to apply to the table")
-    parsetext!(wdg; text = observe(wdg, :text), parse = parsepipeline)
+    :by_wdg = dropdown(map(colnames, t), placeholder = "Grouping variables", multiple = true)
+    :flatten = checkbox("flatten")
+    wdg[:by_toggle] = togglecontent(hbox(wdg[:by_wdg], hskip(1em), wdg[:flatten]), label = "Group data")
+    :by = $(:by_toggle) ? $(:by_wdg) : nothing
+    parsetext!(wdg; text = observe(wdg, :text), on = (observe(wdg, :text)), parse =parsepipeline)
     :apply = button("Apply")
     :reset = button("Reset", className = "is-danger")
-    @on wdg ($(:apply); _.output[] = :function[](:input[]))
+    @on wdg ($(:apply); _.output[] = :by[] === nothing ? :function[](:input[]) : groupby(:function[], :input[], Tuple(:by[]); flatten = :flatten[]))
     @on wdg ($(:reset); :text[] = ""; _.output[] = table(t[]))
-    @layout! wdg Widgets.div(:text, hbox(:apply, hskip(1em), :reset), _.display)
+    @layout! wdg Widgets.div(:text, :by_toggle, hbox(:apply, hskip(1em), :reset), _.display)
 end

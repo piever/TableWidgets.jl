@@ -1,7 +1,7 @@
 julia 0.6
 InteractBase 0.6.0
 InteractBulma
-Widgets
+Widgets 0.2.4
 CSSUtil
 Observables
 MacroTools
