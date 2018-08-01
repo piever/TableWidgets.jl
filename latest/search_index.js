@@ -21,7 +21,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Introduction",
     "title": "Getting started",
     "category": "section",
-    "text": "To install it:Pkg.clone(\"https://github.com/piever/TableWidgets.jl.git\")\nPkg.checkout(\"InteractBase\")\nPkg.checkout(\"Widgets\")See the API reference for more details."
+    "text": "To install it:Pkg.clone(\"https://github.com/piever/TableWidgets.jl.git\")See the API reference for more details."
 },
 
 {
