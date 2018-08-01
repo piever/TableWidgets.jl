@@ -32,7 +32,7 @@ columns of table `t`. `readout` denotes whether the table will be displayed init
 
     on(observe(wdg[:filter])) do x
         sels = (observe(i)[] for i in observe(wdg[:selectors])[])
-        wdg.output[] = t[][[all(i) for i in zip(sels...)]]
+        wdg.output[] = isempty(sels) ? t[] : t[][[all(i) for i in zip(sels...)]]
     end
 
     @layout! wdg Widgets.div(
