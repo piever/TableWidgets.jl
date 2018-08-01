@@ -8,8 +8,6 @@ To install it:
 
 ```julia
 Pkg.clone("https://github.com/piever/TableWidgets.jl.git")
-Pkg.checkout("InteractBase")
-Pkg.checkout("Widgets")
 ```
 
 See the [API reference](@ref) for more details.
