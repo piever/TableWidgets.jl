@@ -40,4 +40,10 @@ columns of table `t`. `readout` denotes whether the table will be displayed init
         :selectors,
         toggletable(_.output, readout = true)
     )
+    on(t) do x
+        observe(wdg, :selectors)[] = []
+        observe(wdg)[] = x
+    end
 end
+
+addfilter(t::Widgets.AbstractWidget; kwargs...) = addfilter(observe(t); kwargs...)
