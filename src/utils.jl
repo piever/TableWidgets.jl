@@ -61,10 +61,3 @@ function undo!(obs::Observable, stack, exclude)
     Observables.setexcludinghandlers(obs, last(stack), t -> t != exclude)
     obs
 end
-
-"""
-apme sa
-"""
-@widget function Widgets.widget(s::Complex)
-    11
-end

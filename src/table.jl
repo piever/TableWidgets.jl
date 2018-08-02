@@ -111,7 +111,7 @@ Create a textbox to preprocess a table with JuliaDB / JuliaDBMeta: displays the 
     :flatten = checkbox("flatten")
     wdg[:by_toggle] = togglecontent(hbox(wdg[:by_wdg], hskip(1em), wdg[:flatten]), label = "Group data")
     :by = $(:by_toggle) ? $(:by_wdg) : nothing
-    parsetext!(wdg; text = observe(wdg, :text), on = (observe(wdg, :text)), parse =parsepipeline)
+    parsetext!(wdg; text = observe(wdg, :text), on = (observe(wdg, :text)), parse = parsepipeline, default = identity)
     :apply = button("Apply")
     :reset = button("Reset", className = "is-danger")
     @on wdg ($(:apply); $(:input); _.output[] = :by[] === nothing ? :function[](:input[]) : groupby(:function[], :input[], Tuple(:by[]); flatten = :flatten[]))
