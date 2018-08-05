@@ -12,8 +12,10 @@ using MacroTools
 export categoricalselector, rangeselector, selector
 
 # hack before rdeits PR is merged in webio
-node(args...; kwargs...) = Node(args...; kwargs...)
-node(s::AbstractString, args...; kwargs...) = node(Symbol(s), args...; kwargs...)
+@static if !isdefined(WebIO, :node)
+    node(args...; kwargs...) = Node(args...; kwargs...)
+    node(s::AbstractString, args...; kwargs...) = node(Symbol(s), args...; kwargs...)
+end
 
 include("utils.jl")
 include("selector.jl")
