@@ -14,25 +14,29 @@ function categoricalselector(v::AbstractArray, f=filter; values=unique(v), value
     @layout! wdg :checkboxes
 end
 
-# """
-# `rangeselector(v::AbstractArray, f=filter)`
-#
-# Create a `rangepicker` as wide as the extrema of `v` and uses to select `v`. By default it returns
-# a filtered version of `v`: use `rangeselector(v, map)` to get the boolean vector of whether each element is
-# selected
-# """
-# function rangeselector(v::AbstractArray{<:Real}, f=filter; digits=6, vskip=1em, min=minimum(v), max=maximum(v), n=50, kwargs...)
-#     min = floor(min, digits)
-#     max = ceil(max, digits)
-#     step = signif((max-min)/n, digits)
-#     range = min:step:(max+step)
-#     :extrema = InteractBase.rangepicker(range; kwargs...)
-#     :changes = (:extrema, :changes)
-#     :function = t -> ((min, max) = :extrema[]; min <= t <= max)
-#     @output! wdg ($(:changes); f(:function, v))
-#     @layout! wdg :extrema
-# end
-#
+"""
+`rangeselector(v::AbstractArray, f=filter)`
+
+Create a `rangepicker` as wide as the extrema of `v` and uses to select `v`. By default it returns
+a filtered version of `v`: use `rangeselector(v, map)` to get the boolean vector of whether each element is
+selected
+"""
+function rangeselector(v::AbstractArray{<:Real}, f=filter; digits=6, vskip=1em, min=minimum(v), max=maximum(v), n=50, kwargs...)
+    min = floor(min, digits=digits)
+    max = ceil(max, digits=digits)
+    step = round((max-min)/n, sigdigits=digits)
+    range = min:step:(max+step)
+    extrema = InteractBase.rangepicker(range; kwargs...)
+    data = OrderedDict{Symbol, Any}(
+        :extrema => extrema,
+        :changes => extrema[:changes]
+    )
+    data[:function] = t -> ((min, max) = data[:extrema][]; min <= t <= max)
+    output = map(t -> f(data[:function], v), data[:changes])
+    wdg = Widget{:rangeselector}(data, output=output)
+    @layout! wdg :extrema
+end
+
 # """
 # `selector(v::AbstractArray, f=filter)`
 #
