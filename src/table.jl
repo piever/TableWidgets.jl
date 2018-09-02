@@ -35,19 +35,16 @@ end
 
 _displaytable(t, lines; kwargs...) = _displaytable(table(t)::AbstractIndexedTable, lines; kwargs...)
 
-@widget wdg function _displaytable(t::AbstractIndexedTable, lines; className = "is-striped is-hoverable", kwargs...)
+function _displaytable(t::AbstractIndexedTable, lines; className = "is-striped is-hoverable", kwargs...)
     headertype = (s in IndexedTables.pkeynames(t) ? "th" : "td" for s in colnames(t))
     headers = (node(h, string(s)) for (s, h) in zip(colnames(t), headertype))
-    :head = node("tr", node("th", ""), headers...) |> node("thead")
+    head = node("tr", node("th", ""), headers...) |> node("thead")
 
     ii = _eachindex(t, lines)
-    for i in ii
-        wdg["row$i"] = tablerow(t, i; kwargs...)
-    end
 
-    :body = node("tbody", (wdg["row$i"] for i in ii)...)
+    body = node("tbody", (tablerow(t, i; kwargs...) for i in ii)...)
     className = "table $className"
-    @layout! wdg Widgets.div(node("table", :head, :body, className=className), style = Dict("overflow" => "scroll"))
+    Widgets.div(node("table", head, body, className=className), style = Dict("overflow" => "scroll"))
 end
 
 _eachindex(t, lines) = _eachindex(rows(t)::AbstractArray, lines)
