@@ -13,7 +13,7 @@ using MacroTools
 export categoricalselector, rangeselector, selector
 
 include("utils.jl")
-# include("selector.jl")
+include("selector.jl")
 # include("table.jl")
 include("edit.jl")
 # include("filter.jl")
