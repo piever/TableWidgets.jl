@@ -46,7 +46,7 @@ function selector(v::AbstractArray, f=filter; kwargs...)
     tb = textbox("insert condition")
     changes = tb[:changes]
     func = Observable{Function}(x -> true)
-    on(x -> update_function!(func, x, parse=parsepredicate), observe(data[:textbox]))
+    on(x -> update_function!(func, x, parse=parsepredicate), tb)
     data = [:textbox => tb, :changes => changes, :function => func]
     wdg = Widget{:selector}(data; output=map(t->f(func[], v), changes))
     @layout! wdg :textbox
