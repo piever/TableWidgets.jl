@@ -26,12 +26,10 @@ function rangeselector(v::AbstractArray{<:Real}, f=filter; digits=6, vskip=1em, 
     step = round((max-min)/n, sigdigits=digits)
     range = min:step:(max+step)
     extrema = InteractBase.rangepicker(range; kwargs...)
-    data = OrderedDict{Symbol, Any}(
-        :extrema => extrema,
-        :changes => extrema[:changes]
-    )
-    data[:function] = t -> ((min, max) = data[:extrema][]; min <= t <= max)
-    output = map(t -> f(data[:function], v), data[:changes])
+    changes = extrema[:changes]
+    func = t -> ((min, max) = extrema[]; min <= t <= max)
+    data = [:extrema => extrema, :changes => changes, :function => func]
+    output = map(t -> f(func, v), changes)
     wdg = Widget{:rangeselector}(data, output=output)
     @layout! wdg :extrema
 end
