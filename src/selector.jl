@@ -37,22 +37,23 @@ function rangeselector(v::AbstractArray{<:Real}, f=filter; digits=6, vskip=1em, 
     @layout! wdg :extrema
 end
 
-# """
-# `selector(v::AbstractArray, f=filter)`
-#
-# Create a `textbox` where the user can type in an anonymous function that is used to select `v`. `_` can be used
-# to denote the funcion argument, e.g. `_ > 0`. By default it returns
-# a filtered version of `v`: use `selector(v, map)` to get the boolean vector of whether each element is
-# selected
-# """
-# function selector(v::AbstractArray, f=filter; kwargs...)
-#     :textbox = textbox("insert condition")
-#     func = Observable{Function}(x -> true)
-#     on(x -> update_function!(func, x, parse=parsepredicate), observe(wdg[:textbox]))
-#     :function = func
-#     @output! wdg ($(:textbox, :changes); f(:function[], v))
-#     @layout! wdg :textbox
-# end
+"""
+`selector(v::AbstractArray, f=filter)`
+
+Create a `textbox` where the user can type in an anonymous function that is used to select `v`. `_` can be used
+to denote the funcion argument, e.g. `_ > 0`. By default it returns
+a filtered version of `v`: use `selector(v, map)` to get the boolean vector of whether each element is
+selected
+"""
+function selector(v::AbstractArray, f=filter; kwargs...)
+    tb = textbox("insert condition")
+    func = Observable{Function}(x -> true)
+    on(x -> update_function!(func, x, parse=parsepredicate), observe(data[:textbox]))
+    @output! wdg ($(:textbox, :changes); f(:function[], v))
+    data = [:textbox => tb, :function => func]
+    wdg = Widget{:selector}(data; output=map(t->f(func[], v), tb[:changes]))
+    @layout! wdg :textbox
+end
 
 # for s in [:categoricalselector, :rangeselector, :selector]
 #     @eval begin
