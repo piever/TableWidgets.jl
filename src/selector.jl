@@ -8,7 +8,7 @@ selected
 function categoricalselector(v::AbstractArray, f=filter; values=unique(v), value=values, kwargs...)
     cb = checkboxes(values; value=value, kwargs...)
     func = t -> t in cb[]
-    data = [:checboxes => cb, :function => func]
+    data = [:checkboxes => cb, :function => func]
     wdg = Widget{:categoricalselector}(data, output = map(x -> f(func, v), cb))
     @layout! wdg :checkboxes
 end
