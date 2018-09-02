@@ -6,11 +6,10 @@ a filtered version of `v`: use `categoricalselector(v, map)` to get the boolean 
 selected
 """
 function categoricalselector(v::AbstractArray, f=filter; values=unique(v), value=values, kwargs...)
-    data = OrderedDict{Symbol, Any}(
-        :checkboxes => checkboxes(values; value=value, kwargs...),
-    )
-    data[:function] = t -> t in data[:checkboxes][]
-    wdg = Widget{:categoricalselector}(data, output = map(x -> f(data[:function], v), data[:checkboxes]))
+    cb = checkboxes(values; value=value, kwargs...)
+    func = t -> t in cb[]
+    data = [:checboxes => cb, :function => func]
+    wdg = Widget{:categoricalselector}(data, output = map(x -> f(func, v), cb))
     @layout! wdg :checkboxes
 end
 
@@ -49,7 +48,6 @@ function selector(v::AbstractArray, f=filter; kwargs...)
     tb = textbox("insert condition")
     func = Observable{Function}(x -> true)
     on(x -> update_function!(func, x, parse=parsepredicate), observe(data[:textbox]))
-    @output! wdg ($(:textbox, :changes); f(:function[], v))
     data = [:textbox => tb, :function => func]
     wdg = Widget{:selector}(data; output=map(t->f(func[], v), tb[:changes]))
     @layout! wdg :textbox
