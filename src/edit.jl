@@ -1,7 +1,7 @@
 # Recipe implementation of Simon Byrne editable table
 editablefield(f; kwargs...) = editablefield(widget(f)::Widgets.AbstractWidget; kwargs...)
 
-function editablefield(w; editing = false, format = InteractBase.format)
+function editablefield(w::Widgets.AbstractWidget; editing = false, format = InteractBase.format)
     editing isa Observable || (editing = Observable(editing))
     data = [:widget => w, :editing => editing]
     wdg = Widget{:editablefield}(data; output = w)
