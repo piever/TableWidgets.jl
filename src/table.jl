@@ -62,21 +62,18 @@ Use `reset!` to restore original table.
 """
 displaytable(::Nothing, args...; kwargs...) = nothing
 
-@widget wdg function displaytable(t, lines = 1:min(10, length(Observables._val(t))); kwargs...)
-    (t isa Observable) || (t = Observable{Any}(t))
-    (lines isa Observable) || (lines = Observable{Any}(lines))
-    :lines = lines
-    :backup = table(t[])
+displaytable(t, lines = 1:min(10, length(Observables._val(t))); kwargs...)
+    (t isa AbstractObservable) || (t = Observable{Any}(t))
+    (lines isa AbstractObservable) || (lines = Observable{Any}(lines))
+    backup = table(t[])
 
-    @output! wdg t
-    @display! wdg _displaytable($(_.output), $(:lines); output = _.output, kwargs...)
+    dsp = Observables.@map _displaytable(&t, &lines; output = t, kwargs...)
 
     scp = WebIO.Scope()
     InteractBase.slap_design!(scp)
-    scp.dom = node("div",  wdg.display)
+    scp.dom = node("div", dsp)
 
-    wdg.scope = scp
-    @layout! wdg _.scope
+    wdg = Widget{:displaytable}([:backup => backup, :lines => lines], output = t, scope = scp, layout = Widgets.scope)
 end
 
 function reset!(wdg::Widget{:displaytable})
@@ -89,34 +86,34 @@ end
 
 Same as `displaytable` but the table can be shown or hidden with a toggle switch.
 """
-@widget wdg function toggletable(args...; readout = true, label = "Show table", kwargs...)
-    :table = displaytable(args...; kwargs...)
-    wdg[:toggle] = togglecontent(wdg[:table], label = label, value = readout)
-    @output! wdg :table
+function toggletable(args...; readout = true, label = "Show table", kwargs...)
+    dt = displaytable(args...; kwargs...)
+    toggle_dt = togglecontent(dt, label = label, value = readout)
+    Widget{:toggletable}([:table => dt, :toggle => toggle_dt], output = observe(dt))
     @layout! wdg :toggle
 end
 
-"""
-`dataeditor(t)`
-
-Create a textbox to preprocess a table with JuliaDB / JuliaDBMeta: displays the result using `toggletable`.
-"""
-@widget wdg function dataeditor(t, args...; kwargs...)
-    (t isa Observable) || (t = Observable{Any}(t))
-    :input = t
-    @output! wdg Observable{Any}(table(t[]))
-    @display! wdg toggletable(_.output, args...; kwargs...)
-    :text = textarea(placeholder = "Write transformation to apply to the table")
-    :by_wdg = dropdown(map(colnames, t), placeholder = "Grouping variables", multiple = true)
-    :flatten = checkbox("flatten")
-    wdg[:by_toggle] = togglecontent(hbox(wdg[:by_wdg], hskip(1em), wdg[:flatten]), label = "Group data")
-    :by = $(:by_toggle) ? $(:by_wdg) : nothing
-    parsetext!(wdg; text = observe(wdg, :text), on = (observe(wdg, :text)), parse = parsepipeline, default = identity)
-    :apply = button("Apply")
-    :reset = button("Reset", className = "is-danger")
-    @on wdg ($(:apply); $(:input); _.output[] = :by[] === nothing ? :function[](:input[]) : groupby(:function[], :input[], Tuple(:by[]); flatten = :flatten[]))
-    @on wdg ($(:reset); :text[] = ""; _.output[] = table(t[]))
-    @layout! wdg Widgets.div(:text, :by_toggle, hbox(:apply, hskip(1em), :reset), _.display)
-end
-
-dataeditor(t::Widgets.AbstractWidget, args...; kwargs...) = dataeditor(observe(t), args...; kwargs...)
+# """
+# `dataeditor(t)`
+#
+# Create a textbox to preprocess a table with JuliaDB / JuliaDBMeta: displays the result using `toggletable`.
+# """
+# @widget wdg function dataeditor(t, args...; kwargs...)
+#     (t isa Observable) || (t = Observable{Any}(t))
+#     :input = t
+#     @output! wdg Observable{Any}(table(t[]))
+#     @display! wdg toggletable(_.output, args...; kwargs...)
+#     :text = textarea(placeholder = "Write transformation to apply to the table")
+#     :by_wdg = dropdown(map(colnames, t), placeholder = "Grouping variables", multiple = true)
+#     :flatten = checkbox("flatten")
+#     wdg[:by_toggle] = togglecontent(hbox(wdg[:by_wdg], hskip(1em), wdg[:flatten]), label = "Group data")
+#     :by = $(:by_toggle) ? $(:by_wdg) : nothing
+#     parsetext!(wdg; text = observe(wdg, :text), on = (observe(wdg, :text)), parse = parsepipeline, default = identity)
+#     :apply = button("Apply")
+#     :reset = button("Reset", className = "is-danger")
+#     @on wdg ($(:apply); $(:input); _.output[] = :by[] === nothing ? :function[](:input[]) : groupby(:function[], :input[], Tuple(:by[]); flatten = :flatten[]))
+#     @on wdg ($(:reset); :text[] = ""; _.output[] = table(t[]))
+#     @layout! wdg Widgets.div(:text, :by_toggle, hbox(:apply, hskip(1em), :reset), _.display)
+# end
+#
+# dataeditor(t::Widgets.AbstractWidget, args...; kwargs...) = dataeditor(observe(t), args...; kwargs...)
