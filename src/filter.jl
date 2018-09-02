@@ -15,7 +15,8 @@ columns of table `t`. `readout` denotes whether the table will be displayed init
     :selectortype = dropdown(selectoptions, placeholder = "Selector type", value = nothing)
     :button = button("Add selector")
     :filter = button("Filter")
-    function columnlayout(v)
+    columnlayout(v::AbstractArray) = columnlayout(v...)
+    function columnlayout(v...)
         cols = map(Widgets.div(className = "column"), v)
         Widgets.div(className = "columns is-multiline is-mobile", cols...)
     end
