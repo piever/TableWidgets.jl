@@ -66,10 +66,10 @@ end
 # end
 
 function parsepredicate(s)
-    ismatch(r"^(\s)*$", s) && return :(t -> true)
-    expr = parse("_ -> " * s)
+    occursin(r"^(\s)*$", s) && return :(t -> true)
+    expr = Meta.parse("_ -> " * s)
     sym = gensym()
     flag = Ref(false)
-    expr = MacroTools.postwalk(x -> x == :(_) ? (flag[] = true; sym) : x, parse(s))
+    expr = MacroTools.postwalk(x -> x == :(_) ? (flag[] = true; sym) : x, Meta.parse(s))
     flag[] ? Expr(:->, sym, expr) : expr
 end

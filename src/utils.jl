@@ -1,4 +1,4 @@
-function parsetext!(wdg::Widgets.AbstractWidget, name = "function"; text = observe(wdg), on = text, parse = Base.parse, default = (args...) -> nothing)
+function parsetext!(wdg::Widgets.AbstractWidget, name = "function"; text = observe(wdg), on = text, parse = Meta.parse, default = (args...) -> nothing)
     f = default
     try
         @eval f = $(parse(text[]))
@@ -12,7 +12,7 @@ function parsetext!(wdg::Widgets.AbstractWidget, name = "function"; text = obser
     wdg
 end
 
-function update_function!(func::Observable, s; parse = Base.parse)
+function update_function!(func::Observable, s; parse = Meta.parse)
     try
         @eval f = $(parse(s))
         func[] = f
@@ -28,7 +28,7 @@ function _pipeline(s)
     """
 end
 
-parsepipeline(s) = parse(_pipeline(s))
+parsepipeline(s) = Meta.parse(_pipeline(s))
 
 """
 `Undo(obs::Observable{T}, stack = T[obs[]]; stacksize = 10) where {T}`
