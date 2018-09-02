@@ -18,9 +18,9 @@ export categoricalselector, rangeselector, selector
 end
 
 include("utils.jl")
-include("selector.jl")
-include("table.jl")
+# include("selector.jl")
+# include("table.jl")
 include("edit.jl")
-include("filter.jl")
+# include("filter.jl")
 
 end # module

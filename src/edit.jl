@@ -1,23 +1,19 @@
-using NamedTuples
-
 # Recipe implementation of Simon Byrne editable table
+editablefield(f; kwargs...) = editablefield(widget(f)::Widgets.AbstractWidget; kwargs...)
 
-@widget wdg function editablefield(field, w = widget(field); editing = false, format = _compact)
-    :widget = w
-    :field = :widget
+function editablefield(w; editing = false, format = InteractBase.format)
     editing isa Observable || (editing = Observable(editing))
-    :editing = editing
-    @output! wdg :widget
-    @layout! wdg $(:editing) ? :widget : map(format, :field)
+    data = [:widget => w, :editing => editing]
+    wdg = Widget{:editablefield}(data; output = w)
+    @layout! wdg Observables.@map &(:editing) ? :widget : map(format, :widget)
 end
 
-@widget wdg function editbutton(save = x -> nothing; editing = false)
-    :edit = button("Edit")
-    :save = button("Save")
+function editbutton(save = () -> nothing; editing = false)
     editing isa Observable || (editing = Observable(editing))
-    :editing = editing
+    data = [:edit => button("Edit"), :save => button("Save"), :editing => editing]
     changestate() = (editing[] = !editing[])
-    @on wdg ($(:edit); changestate())
-    @on wdg (save($(:save)); changestate())
-    @layout! wdg $(:editing) ? :save : :edit
+    wdg = Widget{:editbutton}(data)
+    Observables.on(t -> changestate(), wdg[:edit])
+    Observables.on(t -> (save(); changestate()), wdg[:save])
+    @layout! wdg Observables.@map &(:editing) ? :save : :edit
 end

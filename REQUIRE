@@ -1,4 +1,4 @@
-julia 0.6
+julia 0.7
 InteractBase 0.6.1
 InteractBulma
 Widgets 0.2.4
@@ -6,6 +6,6 @@ CSSUtil
 Observables
 MacroTools
 WebIO 0.2.5
-JuliaDBMeta
-IndexedTables
+#JuliaDBMeta
+#IndexedTables
 Compat
