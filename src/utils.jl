@@ -10,8 +10,9 @@ end
 
 function update_function!(func::AbstractObservable, s; parse = Meta.parse)
     try
-        @eval f = $(parse(s))
-        func[] = f
+        sym = gensym()
+        @eval Main $sym = $(parse(s))
+        func[] = getproperty(Main, sym)
     catch
     end
 end

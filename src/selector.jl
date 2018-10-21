@@ -3,11 +3,11 @@
 
 Create as many checkboxes as the unique elements of `v` and use them to select `v`. By default it returns
 a filtered version of `v`: use `categoricalselector(v, map)` to get the boolean vector of whether each element is
-selected
+selected.
 """
 function categoricalselector(v::AbstractArray, f=filter; values=unique(v), value=values, kwargs...)
     cb = checkboxes(values; value=value, kwargs...)
-    func = t -> t in cb[]
+    func = t -> ismissing(t) ? any(ismissing, cb[]) : t in cb[]
     data = [:checkboxes => cb, :function => func]
     wdg = Widget{:categoricalselector}(data, output = map(x -> f(func, v), cb))
     @layout! wdg :checkboxes
@@ -18,16 +18,18 @@ end
 
 Create a `rangepicker` as wide as the extrema of `v` and uses to select `v`. By default it returns
 a filtered version of `v`: use `rangeselector(v, map)` to get the boolean vector of whether each element is
-selected
+selected. Missing data is excluded from the range automatically.
 """
-function rangeselector(v::AbstractArray{<:Real}, f=filter; digits=6, vskip=1em, min=minimum(v), max=maximum(v), n=50, kwargs...)
+function rangeselector(v::AbstractArray{<:Union{Real, Missing}}, f=filter;
+    digits=6, vskip=1em, min=minimum(skipmissing(v)), max=maximum(skipmissing(v)), n=50, kwargs...)
+
     min = floor(min, digits=digits)
     max = ceil(max, digits=digits)
     step = round((max-min)/n, sigdigits=digits)
     range = min:step:(max+step)
     extrema = InteractBase.rangepicker(range; kwargs...)
     changes = extrema[:changes]
-    func = t -> ((min, max) = extrema[]; min <= t <= max)
+    func = t -> !ismissing(t) && ((min, max) = extrema[]; min <= t <= max)
     data = [:extrema => extrema, :changes => changes, :function => func]
     output = map(t -> f(func, v), changes)
     wdg = Widget{:rangeselector}(data, output=output)
