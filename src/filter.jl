@@ -1,3 +1,10 @@
+# To be replaced by the equivalent
+_filter(t) = t
+function _filter(t, args...)
+    mask = [all(i) for i in zip(args...)]
+    map(x -> x[mask], Tables.columntable(t))
+end
+
 """
 `addfilter(t; readout = true)`
 
@@ -35,7 +42,7 @@ function addfilter(t, r = 6; readout = true)
 
     on(observe(wdg[:filter])) do x
         sels = (observe(i)[] for i in observe(wdg[:selectors])[])
-        wdg.output[] = isempty(sels) ? t[] : t[][[all(i) for i in zip(sels...)]]
+        wdg.output[] = _filter(t[], sels...)
     end
 
     @layout! wdg Widgets.div(

@@ -52,18 +52,18 @@ function selector(v::AbstractArray, f=filter; kwargs...)
     @layout! wdg :textbox
 end
 
-# for s in [:categoricalselector, :rangeselector, :selector]
-#     @eval begin
-#         function $s(t, c::Symbol, args...; kwargs...)
-#             wdg = Widget{$(Widgets.quotenode(s))}()
-#             wdg[:widget] = $s(column(t, c), args...; kwargs...)
-#             wdg[:label] = string(c)
-#             @output! wdg :widget
-#             @layout! wdg Widgets.div(:label, :widget)
-#             return wdg
-#         end
-#     end
-# end
+for s in [:categoricalselector, :rangeselector, :selector]
+    @eval begin
+        function $s(t, c::Symbol, args...; kwargs...)
+            wdg = Widget{$(Widgets.quotenode(s))}()
+            wdg[:widget] = $s(getproperty(t, c), args...; kwargs...)
+            wdg[:label] = string(c)
+            wdg.output = observe(wdg[:widget])
+            @layout! wdg Widgets.div(:label, :widget)
+            return wdg
+        end
+    end
+end
 
 function parsepredicate(s)
     occursin(r"^(\s)*$", s) && return :(t -> true)
