@@ -61,7 +61,7 @@ var documenterSearchIndex = {"docs": [
     "page": "API reference",
     "title": "TableWidgets.categoricalselector",
     "category": "function",
-    "text": "categoricalselector(v::AbstractArray, f=filter)\n\nCreate as many checkboxes as the unique elements of v and use them to select v. By default it returns a filtered version of v: use categoricalselector(v, map) to get the boolean vector of whether each element is selected\n\n\n\n\n\n"
+    "text": "categoricalselector(v::AbstractArray, f=filter)\n\nCreate as many checkboxes as the unique elements of v and use them to select v. By default it returns a filtered version of v: use categoricalselector(v, map) to get the boolean vector of whether each element is selected.\n\n\n\n\n\n"
 },
 
 {
@@ -69,7 +69,7 @@ var documenterSearchIndex = {"docs": [
     "page": "API reference",
     "title": "TableWidgets.rangeselector",
     "category": "function",
-    "text": "rangeselector(v::AbstractArray, f=filter)\n\nCreate a rangepicker as wide as the extrema of v and uses to select v. By default it returns a filtered version of v: use rangeselector(v, map) to get the boolean vector of whether each element is selected\n\n\n\n\n\n"
+    "text": "rangeselector(v::AbstractArray, f=filter)\n\nCreate a rangepicker as wide as the extrema of v and uses to select v. By default it returns a filtered version of v: use rangeselector(v, map) to get the boolean vector of whether each element is selected. Missing data is excluded from the range automatically.\n\n\n\n\n\n"
 },
 
 {
