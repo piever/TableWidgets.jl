@@ -1,7 +1,7 @@
 using TableWidgets, Observables, WebIO, Widgets, InteractBase
 using DataFrames
 using Test
-#
+
 @testset "selector" begin
     v = [1, 1, 2, 2, 1, 3, 4]
     sel = categoricalselector(v)
