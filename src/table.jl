@@ -1,93 +1,43 @@
-using NamedTuples
-
-isfieldeditable(s::Symbol, edit::Bool) = edit
-isfieldeditable(s::Symbol, edit::Function) = edit(s)
-isfieldeditable(s::Symbol, edit::AbstractArray) = s in edit
-isfieldeditable(s::Symbol, edit::Symbol) = s == edit
-isfieldeditable(edit) = t -> isfieldeditable(t, edit)
-
-@widget wdg function tablerow(t, i; output = Observable(nothing), format = InteractBase.format, editing = false, edit = false, widgetfunction = (t, i, el) -> widget(column(t, el)[i]))
-    editing isa Observable || (editing = Observable(editing))
-
-    row = t[i]
-	ns = fieldnames(row)
-    for el in ns
-        val = getfield(row, el)
-        editable = isfieldeditable(el, edit)
-        wdg[string("field_", el)] =
-            editable ? editablefield(val, widgetfunction(t, i, el); editing = editing, format = format) : format(val)
-    end
-
-    if any(isfieldeditable(edit), fieldnames(row))
-        wdg[:button] = editbutton(; editing = editing) do x
-            for el in ns
-                if isfieldeditable(el, edit)
-                    column(t, el)[i] = observe(wdg, string("field_", el))[]
-                end
-            end
-            output[] = output[]
-        end
-    end
-
-    @layout! wdg node("tr", node("th", format(i)),
-        (node("td", child) for (key, child) in _.children)...)
+function format(x)
+    io = IOBuffer()
+    show(IOContext(io, :compact => true), x)
+    String(take!(io))
 end
 
-_displaytable(t, lines; kwargs...) = _displaytable(table(t)::AbstractIndexedTable, lines; kwargs...)
+function row(r, i; format = TableWidgets.format)
+	fields = propertynames(r)
 
-function _displaytable(t::AbstractIndexedTable, lines; className = "is-striped is-hoverable", kwargs...)
-    headertype = (s in IndexedTables.pkeynames(t) ? "th" : "td" for s in colnames(t))
-    headers = (node(h, string(s)) for (s, h) in zip(colnames(t), headertype))
-    head = node("tr", node("th", ""), headers...) |> node("thead")
+    node("tr",
+        node("th", format(i)),
+        (node("td", format(getproperty(r, field))) for field in fields)...)
+end
 
-    ii = _eachindex(t, lines)
+rendertable(t; kwargs...) = render_row_iterator(Tables.rows(t); kwargs...)
+rendertable(t, r::Integer; kwargs...) = render_row_iterator(Iterators.take(Tables.rows(t), r); kwargs...)
 
-    body = node("tbody", (tablerow(t, i; kwargs...) for i in ii)...)
+function render_row_iterator(t; format = TableWidgets.format, className = "is-striped is-hoverable")
+    fr, lr = Iterators.peel(t)
+
+    names = propertynames(fr)
+    headers = node("tr", node("th", ""), (node("th", string(n)) for n in names)...) |> node("thead")
+
+    first_row = row(fr, 1; format = format)
+    body = node("tbody", first_row, (row(r, i+1; format = format) for (i, r) in enumerate(lr))...)
     className = "table $className"
-    Widgets.div(node("table", head, body, className=className), style = Dict("overflow" => "scroll"))
+    n = slap_design!(node("table", headers, body, className = className))
 end
 
-_eachindex(t, lines) = _eachindex(rows(t)::AbstractArray, lines)
-_eachindex(t::AbstractArray, ::Colon) = eachindex(t)
-_eachindex(t::AbstractArray, lines) = (i for i in lines if checkbounds(Bool, t, i))
+function head(t, r::Integer = 6; kwargs...)
+    t isa AbstractObservable || (t = Observable{Any}(t))
+    r isa AbstractObservable || (r = Observable{Integer}(r))
+    h = @map rendertable(&t, &r; kwargs...)
 
-"""
-`displaytable(t, rows=1:10; edit = false)`
-
-Show rows `rows` of table `t` as HTML table. Use `:` to show the whole table. Use `edit=true` to make the rows editable.
-Use `reset!` to restore original table.
-"""
-displaytable(::Nothing, args...; kwargs...) = nothing
-
-displaytable(t, lines = 1:min(10, length(Observables._val(t))); kwargs...)
-    (t isa AbstractObservable) || (t = Observable{Any}(t))
-    (lines isa AbstractObservable) || (lines = Observable{Any}(lines))
-    backup = table(t[])
-
-    dsp = Observables.@map _displaytable(&t, &lines; output = t, kwargs...)
-
-    scp = WebIO.Scope()
-    InteractBase.slap_design!(scp)
-    scp.dom = node("div", dsp)
-
-    wdg = Widget{:displaytable}([:backup => backup, :lines => lines], output = t, scope = scp, layout = Widgets.scope)
+    Widget{:head}([:rows => r, :head => h], output = t, layout = i -> i[:head])
 end
 
-function reset!(wdg::Widget{:displaytable})
-    observe(wdg)[] = wdg[:backup]
-    wdg
-end
-
-"""
-`toggletable(t, rows=1:10)`
-
-Same as `displaytable` but the table can be shown or hidden with a toggle switch.
-"""
-function toggletable(args...; readout = true, label = "Show table", kwargs...)
-    dt = displaytable(args...; kwargs...)
-    toggle_dt = togglecontent(dt, label = label, value = readout)
-    Widget{:toggletable}([:table => dt, :toggle => toggle_dt], output = observe(dt))
-    @layout! wdg :toggle
+function toggled(wdg::AbstractWidget; readout = true, label = "Show")
+    toggled_wdg = togglecontent(wdg, label = label, value = readout)
+    Widget{:toggled}([:toggle => toggled_wdg], output = observe(wdg), layout = i -> i[:toggle])
 end
 
 # """

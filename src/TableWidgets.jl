@@ -1,8 +1,9 @@
 module TableWidgets
 
 using InteractBase, Widgets, CSSUtil, Observables, WebIO
-import Observables: AbstractObservable
-import Widgets: AbstractWidget
+using Tables
+import Observables: AbstractObservable, @map
+import Widgets: AbstractWidget, components
 # using JuliaDBMeta, IndexedTables
 # import IndexedTables: AbstractIndexedTable
 import InteractBulma
@@ -16,7 +17,7 @@ export categoricalselector, rangeselector, selector
 
 include("utils.jl")
 include("selector.jl")
-# include("table.jl")
+include("table.jl")
 include("edit.jl")
 # include("filter.jl")
 
