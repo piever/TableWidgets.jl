@@ -1,21 +1,18 @@
 module TableWidgets
 
-using InteractBase, Widgets, CSSUtil, Observables, JuliaDBMeta, IndexedTables, WebIO
-import IndexedTables: AbstractIndexedTable
+using InteractBase, Widgets, CSSUtil, Observables, WebIO
+using Tables
+import Observables: AbstractObservable, @map, @map!, @on
+import Widgets: AbstractWidget, components
+
 import InteractBulma
-using Compat
 using DataStructures
 import DataStructures: reset!
 
 using MacroTools
 
 export categoricalselector, rangeselector, selector
-
-# hack before rdeits PR is merged in webio
-@static if !isdefined(WebIO, :node)
-    node(args...; kwargs...) = Node(args...; kwargs...)
-    node(s::AbstractString, args...; kwargs...) = node(Symbol(s), args...; kwargs...)
-end
+export dataeditor, addfilter
 
 include("utils.jl")
 include("selector.jl")

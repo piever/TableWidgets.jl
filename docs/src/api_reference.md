@@ -3,8 +3,7 @@
 ## Visualizing tables
 
 ```@docs
-displaytable
-toggletable
+TableWidgets.head
 ```
 
 ## Filtering data

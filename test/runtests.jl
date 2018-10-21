@@ -1,10 +1,6 @@
 using TableWidgets, Observables, WebIO, Widgets, InteractBase
-using IndexedTables, IterableTables, DataFrames, RDatasets
-@static if VERSION < v"0.7.0-DEV.2005"
-    using Base.Test
-else
-    using Test
-end
+using DataFrames
+using Test
 
 @testset "selector" begin
     v = [1, 1, 2, 2, 1, 3, 4]
@@ -42,13 +38,13 @@ end
 end
 
 @testset "table" begin
-    iris = RDatasets.dataset("datasets", "iris")
-    t = table(iris)
-    wdg = displaytable(iris)
-    l = WebIO.children(WebIO.children(wdg.display[][:head])[1]) |> length
-    @test l == 6
-    wdg2 = displaytable(t, 1:20)
-    l2 = children(children(wdg2.display[][:head])[1]) |> length
-    @test l2 == 6
-    @test wdg2.display[][:body] |> children |> length == 20
+    df = DataFrame(x = 1:4, y = ["a", "b", "c", "d"])
+    n = Observable(3)
+    wdg = TableWidgets.head(df, n)
+    l = WebIO.children(WebIO.children(wdg[:head][].dom)[2]) |> length
+    @test l == 3
+    n[] = 10
+    sleep(0.1)
+    l = WebIO.children(WebIO.children(wdg[:head][].dom)[2]) |> length
+    @test l == 4
 end
