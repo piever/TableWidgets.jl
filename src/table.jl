@@ -46,9 +46,9 @@ function toggled(wdg::AbstractWidget; readout = true, label = "Show")
 end
 
 """
-`dataeditor(t)`
+`dataeditor(t, rows; label = "Show table")`
 
-Create a textbox to preprocess a table with JuliaDB / JuliaDBMeta: displays the result using `toggled(head(t))`.
+Create a textbox to preprocess a table: displays the result using `toggled(head(t, rows))`.
 """
 function dataeditor(t, args...; readout = true, label = "Show table", kwargs...)
     (t isa AbstractObservable) || (t = Observable{Any}(t))
