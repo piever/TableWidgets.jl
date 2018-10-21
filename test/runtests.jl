@@ -1,5 +1,5 @@
 using TableWidgets, Observables, WebIO, Widgets, InteractBase
-using IndexedTables, IterableTables, DataFrames, RDatasets
+using IndexedTables, IterableTables, DataFrames
 using Test
 #
 @testset "selector" begin
@@ -36,7 +36,7 @@ end
     @test obs[] == 1
     @test observe(u)[] == 1
 end
-# 
+#
 # @testset "table" begin
 #     iris = RDatasets.dataset("datasets", "iris")
 #     t = table(iris)
