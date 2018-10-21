@@ -15,7 +15,9 @@ end
 rendertable(t; kwargs...) = render_row_iterator(Tables.rows(t); kwargs...)
 rendertable(t, r::Integer; kwargs...) = render_row_iterator(Iterators.take(Tables.rows(t), r); kwargs...)
 
-function render_row_iterator(t; format = TableWidgets.format, className = "is-striped is-hoverable")
+function render_row_iterator(t;
+    format = TableWidgets.format, className = "is-striped is-hoverable", row = TableWidgets.row)
+
     fr, lr = Iterators.peel(t)
 
     names = propertynames(fr)
