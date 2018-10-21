@@ -4,33 +4,34 @@
 Create selectors (`categoricalselector`, `rangeselector`, `selector` are supported) and delete them for various
 columns of table `t`. `readout` denotes whether the table will be displayed initially. Outputs the filtered table.
 """
-function addfilter(t; readout = true)
-    t isa Observable || (t = Observable{Any}(t))
-    wdg = Widget{:addfilter}()
-    wdg[:cols] = dropdown(map(colnames, t), placeholder = "Column to filter", value = nothing)
+function addfilter(t, r = 6; readout = true)
+    t isa AbstractObservable || (t = Observable{Any}(t))
+
+    wdg = Widget{:addfilter}(output = Observable{Any}(t[]))
+    cols = map(Tables.columns, t)
+
+    wdg[:cols] = dropdown(map(collect∘propertynames, t), placeholder = "Column to filter", value = nothing)
+
     selectoptions = OrderedDict(
         "categorical" => categoricalselector,
         "range" => rangeselector,
         "predicate" => selector
     )
+
     wdg[:selectortype] = dropdown(selectoptions, placeholder = "Selector type", value = nothing)
     wdg[:button] = button("Add selector")
     wdg[:filter] = button("Filter")
-    columnlayout(v::AbstractArray) = columnlayout(v...)
-    function columnlayout(v...)
-        cols = map(Widgets.div(className = "column"), v)
-        Widgets.div(className = "columns is-multiline is-mobile", cols...)
-    end
-    wdg[:selectors] = notifications([], layout = columnlayout)
+
+    wrap = Widgets.div(className = "column")
+    container = Widgets.div(className = "columns is-multiline is-mobile")
+    wdg[:selectors] = notifications([], wrap = wrap, container = container)
 
     lazymap(f, v) = (f(i) for i in v)
-    @on wdg begin
-        $(:button)
-        push!(:selectors[], :selectortype[](t[], :cols[], lazymap))
-        :selectors[] = :selectors[]
+    @on begin
+        &wdg[:button]
+        push!(wdg[:selectors][], wdg[:selectortype][](t[], wdg[:cols][], lazymap))
+        wdg[:selectors][] = wdg[:selectors][]
     end
-
-    @output! wdg Observable{Any}(t[])
 
     on(observe(wdg[:filter])) do x
         sels = (observe(i)[] for i in observe(wdg[:selectors])[])
@@ -40,12 +41,13 @@ function addfilter(t; readout = true)
     @layout! wdg Widgets.div(
         Widgets.div(className = "level is-mobile", map(Widgets.div(className="level-item"), [:cols, :selectortype, :button, :filter])...),
         :selectors,
-        toggletable(_.output, readout = true)
+        toggled(head(_.output, r), readout = true)
     )
     on(t) do x
         observe(wdg, :selectors)[] = []
         observe(wdg)[] = x
     end
+    wdg
 end
 
 addfilter(t::Widgets.AbstractWidget; kwargs...) = addfilter(observe(t); kwargs...)
