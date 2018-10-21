@@ -1,4 +1,4 @@
-using DataFrames, Interact, TableWidgets
+using DataFrames, Interact, TableWidgets, Tables
 using Observables: @map
 
 # Pass a DataFrame with the last column containing only strings
