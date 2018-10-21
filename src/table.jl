@@ -27,6 +27,11 @@ function render_row_iterator(t; format = TableWidgets.format, className = "is-st
     n = slap_design!(node("table", headers, body, className = className))
 end
 
+"""
+`head(t, r=6)`
+
+Show first `r` rows of table `t` as HTML table.
+"""
 function head(t, r::Integer = 6; kwargs...)
     t isa AbstractObservable || (t = Observable{Any}(t))
     r isa AbstractObservable || (r = Observable{Integer}(r))
