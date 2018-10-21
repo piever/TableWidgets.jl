@@ -1,13 +1,32 @@
-financetable(v::AbstractArray, args...; kwargs...) =
-    financetable(table(v, fill("", length(v)), names = [:Comment, :Category]), args...; kwargs...)
+using DataFrames, Interact, TableWidgets
+using Observables: @map
 
-function financetable(t::IndexedTables.AbstractIndexedTable, lines = :; categories=[""])
-    obs_table = Observable{Any}(t)
-    options = map(t -> union(last(columns(t)), categories), obs_table)
-    function widgetfunction(t, i, s)
-        col = column(t, s)
-        val = col[i]
-        autocomplete(options, value = val)
+# Pass a DataFrame with the last column containing only strings
+function financetable(t::DataFrame; categories=[""])
+
+    category_vec = last(Tables.columntable(t))
+    category_obs = Observable{Any}(category_vec)
+    options = @map union(&category_obs, categories)
+
+    function myrow(r, i; format = TableWidgets.format)
+        fields = propertynames(r)
+        category = getproperty(r, last(fields))
+        wdg = autocomplete(options, value = category) |> onchange
+        on(wdg) do val
+            category_obs[][i] = val
+            category_obs[] = category_obs[]
+        end
+
+        node("tr",
+            node("th", format(i)),
+            (node("td", format(getproperty(r, field))) for field in fields[1:end-1])...,
+            node("td", wdg))
     end
-    displaytable(obs_table, lines, edit = :Category, widgetfunction = widgetfunction)
+
+    TableWidgets.rendertable(t, row = myrow)
 end
+
+# Annotate your expenses / income from a set of categories (the set of categories
+# increases every time you type one manually)
+df = DataFrame(Place = ["home", "home", "work"], Amount = [-12.3, -1.2, 1400], Category = ["", "", ""])
+financetable(df, categories = ["Food", "Coffe", "Salary"])
