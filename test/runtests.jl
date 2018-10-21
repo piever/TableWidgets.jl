@@ -36,15 +36,15 @@ end
     @test obs[] == 1
     @test observe(u)[] == 1
 end
-#
+
 # @testset "table" begin
-#     iris = RDatasets.dataset("datasets", "iris")
-#     t = table(iris)
-#     wdg = displaytable(iris)
-#     l = WebIO.children(WebIO.children(wdg.display[][:head])[1]) |> length
-#     @test l == 6
-#     wdg2 = displaytable(t, 1:20)
-#     l2 = children(children(wdg2.display[][:head])[1]) |> length
-#     @test l2 == 6
-#     @test wdg2.display[][:body] |> children |> length == 20
+#     df = DataFrame(x = 1:4, y = ["a", "b", "c", "d"])
+#     n = Observable(3)
+#     wdg = Tables.head(df, n)
+#     l = WebIO.children(WebIO.children(wdg[:head][].dom)[2]) |> length
+#     @test l == 3
+#     n[] = 10
+#     sleep(0.1)
+#     l = WebIO.children(WebIO.children(wdg[:head][].dom)[2]) |> length
+#     @test l == 4
 # end
