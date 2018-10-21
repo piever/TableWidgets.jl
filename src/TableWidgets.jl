@@ -2,7 +2,7 @@ module TableWidgets
 
 using InteractBase, Widgets, CSSUtil, Observables, WebIO
 using Tables
-import Observables: AbstractObservable, @map
+import Observables: AbstractObservable, @map, @map!, @on
 import Widgets: AbstractWidget, components
 
 import InteractBulma

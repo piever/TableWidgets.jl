@@ -54,7 +54,7 @@ end
 
 # for s in [:categoricalselector, :rangeselector, :selector]
 #     @eval begin
-#         function $s(t::IndexedTables.AbstractIndexedTable, c::Symbol, args...; kwargs...)
+#         function $s(t, c::Symbol, args...; kwargs...)
 #             wdg = Widget{$(Widgets.quotenode(s))}()
 #             wdg[:widget] = $s(column(t, c), args...; kwargs...)
 #             wdg[:label] = string(c)

@@ -4,23 +4,24 @@
 Create selectors (`categoricalselector`, `rangeselector`, `selector` are supported) and delete them for various
 columns of table `t`. `readout` denotes whether the table will be displayed initially. Outputs the filtered table.
 """
-@widget wdg function addfilter(t; readout = true)
+function addfilter(t; readout = true)
     t isa Observable || (t = Observable{Any}(t))
-    :cols = dropdown(map(colnames, t), placeholder = "Column to filter", value = nothing)
+    wdg = Widget{:addfilter}()
+    wdg[:cols] = dropdown(map(colnames, t), placeholder = "Column to filter", value = nothing)
     selectoptions = OrderedDict(
         "categorical" => categoricalselector,
         "range" => rangeselector,
         "predicate" => selector
     )
-    :selectortype = dropdown(selectoptions, placeholder = "Selector type", value = nothing)
-    :button = button("Add selector")
-    :filter = button("Filter")
+    wdg[:selectortype] = dropdown(selectoptions, placeholder = "Selector type", value = nothing)
+    wdg[:button] = button("Add selector")
+    wdg[:filter] = button("Filter")
     columnlayout(v::AbstractArray) = columnlayout(v...)
     function columnlayout(v...)
         cols = map(Widgets.div(className = "column"), v)
         Widgets.div(className = "columns is-multiline is-mobile", cols...)
     end
-    :selectors = notifications([], layout = columnlayout)
+    wdg[:selectors] = notifications([], layout = columnlayout)
 
     lazymap(f, v) = (f(i) for i in v)
     @on wdg begin

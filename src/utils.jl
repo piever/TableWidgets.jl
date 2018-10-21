@@ -6,29 +6,19 @@ function parsetext!(wdg::Widgets.AbstractWidget, name = "function"; text = obser
     end
     name = Symbol(name)
     wdg[name] = Observable{Any}(f)
-    InteractBase.on(on) do s...
+    InteractBase.on(on) do s
         update_function!(wdg[name], text[]; parse = parse)
     end
     wdg
 end
 
-function update_function!(func::Observable, s; parse = Meta.parse)
+function update_function!(func::AbstractObservable, s; parse = Meta.parse)
     try
         @eval f = $(parse(s))
         func[] = f
     catch
     end
 end
-
-function _pipeline(s)
-    """
-    JuliaDBMeta.@apply begin
-        $s
-    end
-    """
-end
-
-parsepipeline(s) = Meta.parse(_pipeline(s))
 
 """
 `Undo(obs::Observable{T}, stack = T[obs[]]; stacksize = 10) where {T}`

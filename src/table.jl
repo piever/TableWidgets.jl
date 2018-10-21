@@ -45,27 +45,29 @@ function toggled(wdg::AbstractWidget; readout = true, label = "Show")
     Widget{:toggled}([:toggle => toggled_wdg], output = observe(wdg), layout = i -> i[:toggle])
 end
 
-# """
-# `dataeditor(t)`
-#
-# Create a textbox to preprocess a table with JuliaDB / JuliaDBMeta: displays the result using `toggletable`.
-# """
-# @widget wdg function dataeditor(t, args...; kwargs...)
-#     (t isa Observable) || (t = Observable{Any}(t))
-#     :input = t
-#     @output! wdg Observable{Any}(table(t[]))
-#     @display! wdg toggletable(_.output, args...; kwargs...)
-#     :text = textarea(placeholder = "Write transformation to apply to the table")
-#     :by_wdg = dropdown(map(colnames, t), placeholder = "Grouping variables", multiple = true)
-#     :flatten = checkbox("flatten")
-#     wdg[:by_toggle] = togglecontent(hbox(wdg[:by_wdg], hskip(1em), wdg[:flatten]), label = "Group data")
-#     :by = $(:by_toggle) ? $(:by_wdg) : nothing
-#     parsetext!(wdg; text = observe(wdg, :text), on = (observe(wdg, :text)), parse = parsepipeline, default = identity)
-#     :apply = button("Apply")
-#     :reset = button("Reset", className = "is-danger")
-#     @on wdg ($(:apply); $(:input); _.output[] = :by[] === nothing ? :function[](:input[]) : groupby(:function[], :input[], Tuple(:by[]); flatten = :flatten[]))
-#     @on wdg ($(:reset); :text[] = ""; _.output[] = table(t[]))
-#     @layout! wdg Widgets.div(:text, :by_toggle, hbox(:apply, hskip(1em), :reset), _.display)
-# end
-#
-# dataeditor(t::Widgets.AbstractWidget, args...; kwargs...) = dataeditor(observe(t), args...; kwargs...)
+"""
+`dataeditor(t)`
+
+Create a textbox to preprocess a table with JuliaDB / JuliaDBMeta: displays the result using `toggled(head(t))`.
+"""
+function dataeditor(t, args...; readout = true, label = "Show table", kwargs...)
+    (t isa AbstractObservable) || (t = Observable{Any}(t))
+    output = Observable{Any}(t[])
+    wdg = Widget{:dataeditor}(output = output)
+    wdg[:input] = t
+    wdg[:display] = toggled(head(observe(wdg), args...; kwargs...); readout = readout, label = label)
+    wdg[:text] = textarea(placeholder = "Write transformation to apply to the table")
+    parsetext!(wdg; text = observe(wdg, :text), on = (observe(wdg, :text)), default = identity)
+    wdg[:apply] = button("Apply")
+    wdg[:reset] = button("Reset", className = "is-danger")
+    @map! observe(wdg) begin
+        &wdg[:apply]
+        (wdg[:function][])(&t)
+    end
+    @on begin
+        &wdg[:reset]
+        wdg[:text][] = ""
+        observe(wdg)[] = t[]
+    end
+    @layout! wdg Widgets.div(:text, hbox(:apply, hskip(1em), :reset), :display)
+end
