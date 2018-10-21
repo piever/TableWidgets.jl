@@ -32,9 +32,9 @@ end
 
 Show first `r` rows of table `t` as HTML table.
 """
-function head(t, r::Integer = 6; kwargs...)
+function head(t, r = 6; kwargs...)
     t isa AbstractObservable || (t = Observable{Any}(t))
-    r isa AbstractObservable || (r = Observable{Integer}(r))
+    r isa AbstractObservable || (r = Observable{Int}(r))
     h = @map rendertable(&t, &r; kwargs...)
 
     Widget{:head}([:rows => r, :head => h], output = t, layout = i -> i[:head])

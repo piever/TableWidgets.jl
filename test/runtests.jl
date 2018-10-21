@@ -1,5 +1,5 @@
 using TableWidgets, Observables, WebIO, Widgets, InteractBase
-using IndexedTables, IterableTables, DataFrames
+using DataFrames
 using Test
 #
 @testset "selector" begin
@@ -37,14 +37,14 @@ end
     @test observe(u)[] == 1
 end
 
-# @testset "table" begin
-#     df = DataFrame(x = 1:4, y = ["a", "b", "c", "d"])
-#     n = Observable(3)
-#     wdg = Tables.head(df, n)
-#     l = WebIO.children(WebIO.children(wdg[:head][].dom)[2]) |> length
-#     @test l == 3
-#     n[] = 10
-#     sleep(0.1)
-#     l = WebIO.children(WebIO.children(wdg[:head][].dom)[2]) |> length
-#     @test l == 4
-# end
+@testset "table" begin
+    df = DataFrame(x = 1:4, y = ["a", "b", "c", "d"])
+    n = Observable(3)
+    wdg = TableWidgets.head(df, n)
+    l = WebIO.children(WebIO.children(wdg[:head][].dom)[2]) |> length
+    @test l == 3
+    n[] = 10
+    sleep(0.1)
+    l = WebIO.children(WebIO.children(wdg[:head][].dom)[2]) |> length
+    @test l == 4
+end

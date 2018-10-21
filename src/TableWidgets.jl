@@ -4,10 +4,8 @@ using InteractBase, Widgets, CSSUtil, Observables, WebIO
 using Tables
 import Observables: AbstractObservable, @map
 import Widgets: AbstractWidget, components
-# using JuliaDBMeta, IndexedTables
-# import IndexedTables: AbstractIndexedTable
+
 import InteractBulma
-using Compat
 using DataStructures
 import DataStructures: reset!
 
