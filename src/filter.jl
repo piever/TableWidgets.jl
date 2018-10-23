@@ -33,7 +33,6 @@ function addfilter(t, r = 6; readout = true)
     container = Widgets.div(className = "columns is-multiline is-mobile")
     wdg[:selectors] = notifications([], wrap = wrap, container = container)
 
-    lazymap(f, v) = (f(i) for i in v)
     @on begin
         &wdg[:button]
         push!(wdg[:selectors][], wdg[:selectortype][](t[], wdg[:cols][], lazymap))

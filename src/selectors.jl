@@ -1,3 +1,5 @@
+lazymap(f, v) = (f(i) for i in v)
+
 @enum ColumnStyle categorical numerical arbitrary
 
 const selectordict = Dict(
@@ -29,7 +31,7 @@ function selectors(t; threshold = 10, defaultstyle = TableWidgets.defaultstyle)
 
     for (name, col) in pairs(cols)
         sel_func = defaultselector(name, col, threshold)
-
+        sel = sel_func(col, lazymap; label = string(name))
         push!(wdg[widgettype(sel)], sel)
     end
 
