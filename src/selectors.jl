@@ -31,32 +31,47 @@ defaultstyle(name::Symbol, col, n) = hasdistinct(col, n) ? arbitrary : categoric
 defaultselector(args...) = selectordict[defaultstyle(args...)]
 
 function selectors(t; threshold = 10, defaultstyle = TableWidgets.defaultstyle)
-    cols = Tables.columntable(t)
+    t isa AbstractObservable || (t = Observable{Any}(t))
+    cols = @map Tables.columntable(&t)
+    output = Observable{Any}(cols[])
+    connect!(cols, output)
 
-    sel_dict = OrderedDict(sym => Widget[] for sym in selectortypes)
+    sel_dict = OrderedDict(sym => Observable{Any}(Widget[]) for sym in selectortypes)
 
-    for (name, col) in pairs(cols)
-        sel_func = defaultselector(name, col, threshold)
-        sel = sel_func(col, lazymap)
-        push!(sel_dict[widgettype(sel)], toggled(sel; label = string(name), readout = false))
+    function update_sels!(x)
+        for sym in selectortypes
+            empty!(sel_dict[sym][])
+        end
+        for (name, col) in pairs(x)
+            sel_func = defaultselector(name, col, threshold)
+            sel = sel_func(col, lazymap)
+            push!(sel_dict[widgettype(sel)][], toggled(sel; label = string(name), readout = false))
+        end
+        for sym in selectortypes
+            sel_dict[sym][] = sel_dict[sym][]
+        end
     end
 
-    wdg = Widget{:selectors}(sel_dict; output = Observable{Any}(cols))
+    update_sels!(cols[])
+    on(update_sels!, cols)
+
+    wdg = Widget{:selectors}(sel_dict; output = output)
 
     wdg[:filter] = button("Filter")
-    on(wdg[:filter]) do x
-        sels = (observe(i)[] for i in Iterators.flatten(wdg[seltyp] for seltyp in selectortypes))
-        wdg.output[] = _filter(t, sels...)
+    on(wdg[:filter]) do _
+        selwdgs = Iterators.flatten(wdg[seltyp][] for seltyp in selectortypes)
+        sels = (i[] for i in selwdgs if i[:toggle][])
+        output[] = _filter(cols[], sels...)
     end
 
     layout!(wdg) do x
-        cols = [node(
+        sel_cols = [node(
             :div,
             className = "column",
             string(typ),
-            x[typ]...
+            @map(node(:div, &x[typ]...))
         ) for typ in selectortypes]
-        filters = node(:div, className = "columns", cols...)
+        filters = node(:div, className = "columns", sel_cols...)
         node(:div, x[:filter], filters)
     end
 end
