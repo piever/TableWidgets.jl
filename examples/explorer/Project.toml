@@ -1,6 +1,7 @@
 [deps]
 Blink = "ad839575-38b3-5650-b840-f874b8c74a25"
 CSV = "336ed68f-0bac-5ca0-87d4-7b16caf5d00b"
+DataFrames = "a93c6f00-e57d-5684-b7b6-d8193f3e46c0"
 Interact = "c601a237-2ae4-5e1e-952c-7a85b0c7eef1"
 Observables = "510215fc-4207-5dde-b226-833fc4488ee2"
 Plots = "91a5bcdd-55d7-5caf-9e0b-520d859cae80"

@@ -26,5 +26,5 @@ end
 
 ##
 
-w = Window()
+w = Window(async = false)
 body!(w, mypipeline())

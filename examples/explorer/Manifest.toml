@@ -611,7 +611,7 @@ version = "0.0.0"
 
 [[TableWidgets]]
 deps = ["CSSUtil", "Compat", "DataStructures", "InteractBase", "InteractBulma", "IterTools", "MacroTools", "Observables", "Tables", "Test", "WebIO", "Widgets"]
-git-tree-sha1 = "88819da3dec33039548946830f9dfba4fe246b8b"
+git-tree-sha1 = "ee38af0229844325fdb050f73ab4c56da2223431"
 repo-rev = "master"
 repo-url = "https://github.com/piever/TableWidgets.jl.git"
 uuid = "268f3104-2f76-5809-89e2-da1643c99191"
@@ -640,7 +640,7 @@ uuid = "30578b45-9adc-5946-b283-645ec420af67"
 version = "0.4.0"
 
 [[UUIDs]]
-deps = ["Random"]
+deps = ["Random", "SHA"]
 uuid = "cf7118a7-6976-5b1a-9a39-7adc72f591a4"
 
 [[Unicode]]
