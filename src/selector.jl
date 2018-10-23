@@ -5,12 +5,13 @@ Create as many checkboxes as the unique elements of `v` and use them to select `
 a filtered version of `v`: use `categoricalselector(v, map)` to get the boolean vector of whether each element is
 selected.
 """
-function categoricalselector(v::AbstractArray, f=filter; values=unique(v), value=values, kwargs...)
+function categoricalselector(v::AbstractArray, f=filter; values=unique(v), value=values, label=nothing, kwargs...)
     cb = checkboxes(values; value=value, kwargs...)
     func = t -> ismissing(t) ? any(ismissing, cb[]) : t in cb[]
     data = [:checkboxes => cb, :function => func]
     wdg = Widget{:categoricalselector}(data, output = map(x -> f(func, v), cb))
     @layout! wdg :checkboxes
+    label!(wdg, label)
 end
 
 """
@@ -21,7 +22,7 @@ a filtered version of `v`: use `rangeselector(v, map)` to get the boolean vector
 selected. Missing data is excluded from the range automatically.
 """
 function rangeselector(v::AbstractArray{<:Union{Real, Missing}}, f=filter;
-    digits=6, vskip=1em, min=minimum(skipmissing(v)), max=maximum(skipmissing(v)), n=50, kwargs...)
+    digits=6, vskip=1em, min=minimum(skipmissing(v)), max=maximum(skipmissing(v)), n=50, label=nothing, kwargs...)
 
     min = floor(min, digits=digits)
     max = ceil(max, digits=digits)
@@ -34,6 +35,7 @@ function rangeselector(v::AbstractArray{<:Union{Real, Missing}}, f=filter;
     output = map(t -> f(func, v), changes)
     wdg = Widget{:rangeselector}(data, output=output)
     @layout! wdg :extrema
+    label!(wdg, label)
 end
 
 """
@@ -44,7 +46,7 @@ to denote the funcion argument, e.g. `_ > 0`. By default it returns
 a filtered version of `v`: use `selector(v, map)` to get the boolean vector of whether each element is
 selected
 """
-function selector(v::AbstractArray, f=filter; kwargs...)
+function selector(v::AbstractArray, f=filter; label=nothing, kwargs...)
     tb = textbox("insert condition")
     changes = tb[:changes]
     func = Observable{Function}(x -> true)
@@ -52,19 +54,18 @@ function selector(v::AbstractArray, f=filter; kwargs...)
     data = [:textbox => tb, :changes => changes, :function => func]
     wdg = Widget{:selector}(data; output=map(t->f(func[], v), changes))
     @layout! wdg :textbox
+    label!(wdg, label)
+end
+
+label!(v, ::Nothing) = v
+function label!(v::Widget, l::AbstractString)
+    v[:label] = l
+    g = layout(v)
+    Widget(v, layout = x -> Widgets.div(x[:label], g(x)))
 end
 
 for s in [:categoricalselector, :rangeselector, :selector]
-    @eval begin
-        function $s(t, c::Symbol, args...; kwargs...)
-            wdg = Widget{$(Widgets.quotenode(s))}()
-            wdg[:widget] = $s(getproperty(t, c), args...; kwargs...)
-            wdg[:label] = string(c)
-            wdg.output = observe(wdg[:widget])
-            @layout! wdg Widgets.div(:label, :widget)
-            return wdg
-        end
-    end
+    @eval $s(t, c::Symbol, args...; kwargs...) = $s(getproperty(t, c), args...; label = string(c), kwargs...)
 end
 
 function parsepredicate(s)

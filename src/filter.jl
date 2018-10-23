@@ -15,9 +15,9 @@ function addfilter(t, r = 6; readout = true)
     t isa AbstractObservable || (t = Observable{Any}(t))
 
     wdg = Widget{:addfilter}(output = Observable{Any}(t[]))
-    cols = map(Tables.columns, t)
+    cols = map(Tables.columntable, t)
 
-    wdg[:cols] = dropdown(map(collect∘propertynames, t), placeholder = "Column to filter", value = nothing)
+    wdg[:cols] = dropdown(map(collect∘propertynames, cols), placeholder = "Column to filter", value = nothing)
 
     selectoptions = OrderedDict(
         "categorical" => categoricalselector,
