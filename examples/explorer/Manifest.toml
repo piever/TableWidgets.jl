@@ -599,6 +599,14 @@ git-tree-sha1 = "a355f1882d64881a11f853e64dcc353975c4df6e"
 uuid = "382cd787-c1b6-5bf2-a167-d5b971a19bda"
 version = "0.3.1"
 
+[[TableView]]
+deps = ["Dates", "IteratorInterfaceExtensions", "JSExpr", "JSON", "Observables", "TableTraits", "Tables", "WebIO"]
+git-tree-sha1 = "ec2530d52d885165f594721b28b130fc531c8707"
+repo-rev = "14a89cd5d6c06a4034f638a97f087eae98f12714"
+repo-url = "https://github.com/JuliaComputing/TableView.jl.git"
+uuid = "4a3a4c30-268a-52b6-8ea8-6590eb8977c8"
+version = "0.0.0"
+
 [[TableWidgets]]
 deps = ["CSSUtil", "Compat", "DataStructures", "InteractBase", "InteractBulma", "IterTools", "MacroTools", "Observables", "Tables", "Test", "WebIO", "Widgets"]
 git-tree-sha1 = "88819da3dec33039548946830f9dfba4fe246b8b"

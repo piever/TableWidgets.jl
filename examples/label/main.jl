@@ -1,4 +1,4 @@
-using DataFrames, Interact, TableWidgets, Tables
+using DataFrames, Interact, TableWidgets, Tables, Blink
 using Observables: @map
 
 # Pass a DataFrame with the last column containing only strings
@@ -29,4 +29,7 @@ end
 # Annotate your expenses / income from a set of categories (the set of categories
 # increases every time you type one manually)
 df = DataFrame(Place = ["home", "home", "work"], Amount = [-12.3, -1.2, 1400], Category = ["", "", ""])
-label!(df, categories = ["Food", "Coffe", "Salary"])
+t = label!(df, categories = ["Food", "Coffe", "Salary"])
+
+w = Window()
+body!(w, t)

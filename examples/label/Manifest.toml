@@ -7,11 +7,23 @@ version = "0.1.0"
 [[Base64]]
 uuid = "2a0f44e3-6c83-55bd-87e4-b1978d98bd5f"
 
+[[BinDeps]]
+deps = ["Compat", "Libdl", "SHA", "URIParser"]
+git-tree-sha1 = "12093ca6cdd0ee547c39b1870e0c9c3f154d9ca9"
+uuid = "9e28174c-4ba2-5203-b857-d8d62c4213ee"
+version = "0.8.10"
+
 [[BinaryProvider]]
 deps = ["Libdl", "Pkg", "SHA", "Test"]
 git-tree-sha1 = "9930c1a6cd49d9fcd7218df6be417e6ae4f1468a"
 uuid = "b99e7846-7c00-51b0-8f62-c81ae34c0232"
 version = "0.5.2"
+
+[[Blink]]
+deps = ["Base64", "BinDeps", "Distributed", "JSExpr", "JSON", "Lazy", "Libdl", "Logging", "MacroTools", "Mustache", "Mux", "Pkg", "Reexport", "Sockets", "Test", "WebIO", "WebSockets"]
+git-tree-sha1 = "74096d749a7d58e2798abfc087fc6a2e36df0a75"
+uuid = "ad839575-38b3-5650-b840-f874b8c74a25"
+version = "0.8.1"
 
 [[CSSUtil]]
 deps = ["Colors", "Compat", "JSON", "Measures", "Pkg", "WebIO"]
@@ -98,6 +110,24 @@ version = "0.4.0"
 deps = ["Random"]
 uuid = "9fa8497b-333b-5362-9e8d-4d0656e87820"
 
+[[HTTP]]
+deps = ["Base64", "Dates", "Distributed", "IniFile", "MbedTLS", "Sockets", "Test"]
+git-tree-sha1 = "8a0f75e8b09df01d9f1ba9ad3fbf8b4983595d20"
+uuid = "cd3eb016-35fb-5094-929b-558a96fad6f3"
+version = "0.6.14"
+
+[[Hiccup]]
+deps = ["MacroTools", "Test"]
+git-tree-sha1 = "6187bb2d5fcbb2007c39e7ac53308b0d371124bd"
+uuid = "9fb69e20-1954-56bb-a84f-559cc56a8ff7"
+version = "0.2.2"
+
+[[IniFile]]
+deps = ["Test"]
+git-tree-sha1 = "098e4d2c533924c921f9f9847274f2ad89e018b8"
+uuid = "83e8ac13-25f8-5344-8a64-a9f2b223428f"
+version = "0.5.0"
+
 [[Interact]]
 deps = ["CSSUtil", "DataStructures", "InteractBase", "InteractBulma", "JSON", "Knockout", "Observables", "Pkg", "Reexport", "Test", "WebIO", "Widgets"]
 git-tree-sha1 = "102666d2d89a672c86bd33399a5f36c7e5d2b3b5"
@@ -150,6 +180,12 @@ git-tree-sha1 = "63e5e0bd2e9923191c30bb1e3d6e4d579155ddfa"
 uuid = "bcebb21b-c2e3-54f8-a781-646b90f6d2cc"
 version = "0.2.0"
 
+[[Lazy]]
+deps = ["Compat", "MacroTools", "Test"]
+git-tree-sha1 = "1c2c5566f0eeaaad6979c156562384458f966e6a"
+uuid = "50d2b5c4-7a5e-59d5-8109-a42b560f39c0"
+version = "0.13.1"
+
 [[LibGit2]]
 uuid = "76f85450-5226-5b5a-8eaa-529ad045b433"
 
@@ -173,6 +209,12 @@ version = "0.4.4"
 deps = ["Base64"]
 uuid = "d6f4376e-aef5-505a-96c1-9c027394607a"
 
+[[MbedTLS]]
+deps = ["BinaryProvider", "Libdl", "Pkg", "Random", "Sockets", "Test"]
+git-tree-sha1 = "4b890362c0c2fdb14a575ce927f1f4eeac6dda9f"
+uuid = "739be429-bea8-5141-9913-cc70e7f3736d"
+version = "0.6.4"
+
 [[Measures]]
 deps = ["Pkg", "Test"]
 git-tree-sha1 = "ddfd6d13e330beacdde2c80de27c1c671945e7d9"
@@ -187,6 +229,18 @@ version = "0.3.1"
 
 [[Mmap]]
 uuid = "a63ad114-7e13-5084-954f-fe012c677804"
+
+[[Mustache]]
+deps = ["Pkg", "Tables", "Test"]
+git-tree-sha1 = "1cee2f530502aa2357724e7b19af3239b2e7f6b7"
+uuid = "ffc61752-8dc7-55ee-8c37-f3e9cdd09e70"
+version = "0.5.5"
+
+[[Mux]]
+deps = ["AssetRegistry", "Base64", "HTTP", "Hiccup", "Lazy", "Pkg", "Sockets", "Test", "WebSockets"]
+git-tree-sha1 = "487feb060cdd5cc152ef4f75b3cb565c0dc4300a"
+uuid = "a975b10e-0019-58db-a62f-e48ff68538c9"
+version = "0.5.3"
 
 [[Observables]]
 deps = ["Test"]
@@ -297,6 +351,12 @@ git-tree-sha1 = "a34a2d588e2d2825602bf14a24216d5c8b0921ec"
 uuid = "3bb67fe8-82b1-5028-8e26-92a6c54297fa"
 version = "0.8.1"
 
+[[URIParser]]
+deps = ["Test", "Unicode"]
+git-tree-sha1 = "6ddf8244220dfda2f17539fa8c9de20d6c575b69"
+uuid = "30578b45-9adc-5946-b283-645ec420af67"
+version = "0.4.0"
+
 [[UUIDs]]
 deps = ["Random"]
 uuid = "cf7118a7-6976-5b1a-9a39-7adc72f591a4"
@@ -315,6 +375,12 @@ deps = ["AssetRegistry", "Base64", "Compat", "Dates", "FunctionalCollections", "
 git-tree-sha1 = "1f70c8c7c30fd6cf95fd5d517e59a5327505a043"
 uuid = "0f1e0344-ec1d-5b48-a673-e5cf874b6c29"
 version = "0.4.0"
+
+[[WebSockets]]
+deps = ["Base64", "Dates", "Distributed", "HTTP", "MbedTLS", "Pkg", "Random", "Sockets", "Test"]
+git-tree-sha1 = "f23986a5f20ed2ed68b462e0fdec20d6a4468757"
+uuid = "104b5d7c-a370-577a-8038-80a2059c5097"
+version = "1.0.3"
 
 [[Widgets]]
 deps = ["DataStructures", "Observables", "Pkg", "Test"]

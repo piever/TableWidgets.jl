@@ -1,4 +1,5 @@
 [deps]
+Blink = "ad839575-38b3-5650-b840-f874b8c74a25"
 DataFrames = "a93c6f00-e57d-5684-b7b6-d8193f3e46c0"
 Interact = "c601a237-2ae4-5e1e-952c-7a85b0c7eef1"
 TableWidgets = "268f3104-2f76-5809-89e2-da1643c99191"
