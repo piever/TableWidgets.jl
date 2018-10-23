@@ -37,11 +37,17 @@ function selectors(t; threshold = 10, defaultstyle = TableWidgets.defaultstyle)
 
     for (name, col) in pairs(cols)
         sel_func = defaultselector(name, col, threshold)
-        sel = sel_func(col, lazymap; label = string(name))
-        push!(sel_dict[widgettype(sel)], toggled(sel, readout = false))
+        sel = sel_func(col, lazymap)
+        push!(sel_dict[widgettype(sel)], toggled(sel; label = string(name), readout = false))
     end
 
-    wdg = Widget{:selectors}(sel_dict)
+    wdg = Widget{:selectors}(sel_dict; output = Observable{Any}(cols))
+
+    wdg[:filter] = button("Filter")
+    on(wdg[:filter]) do x
+        sels = (observe(i)[] for i in Iterators.flatten(wdg[seltyp] for seltyp in selectortypes))
+        wdg.output[] = _filter(t, sels...)
+    end
 
     layout!(wdg) do x
         cols = [node(
@@ -50,6 +56,7 @@ function selectors(t; threshold = 10, defaultstyle = TableWidgets.defaultstyle)
             string(typ),
             x[typ]...
         ) for typ in selectortypes]
-        node(:div, className = "columns", cols...)
+        filters = node(:div, className = "columns", cols...)
+        node(:div, x[:filter], filters)
     end
 end

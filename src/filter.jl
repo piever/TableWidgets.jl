@@ -28,13 +28,13 @@ function addfilter(t, r = 6; readout = true)
 
     @on begin
         &wdg[:button]
-        push!(wdg[:selectors][], wdg[:selectortype][](t[], wdg[:cols][], lazymap))
+        push!(wdg[:selectors][], wdg[:selectortype][](cols[], wdg[:cols][], lazymap))
         wdg[:selectors][] = wdg[:selectors][]
     end
 
-    on(observe(wdg[:filter])) do x
+    on(wdg[:filter]) do x
         sels = (observe(i)[] for i in observe(wdg[:selectors])[])
-        wdg.output[] = _filter(t[], sels...)
+        wdg.output[] = _filter(cols[], sels...)
     end
 
     @layout! wdg Widgets.div(
