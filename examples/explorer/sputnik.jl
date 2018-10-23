@@ -38,13 +38,13 @@ function myui(df; kwargs...)
         OrderedDict("left" => leftpane, "right" => rightpane);
         output = observe(rightpane),
     )
-
+    colstyle = Dict("height" => "100vh", "overflow-y" => "scroll", "overflow-x" => "hidden")
     @layout! wdg begin
         node(
             "div",
             className = "columns",
-            node("div", className = "column", :left),
-            node("div", className = "column", :right),
+            node("div", className = "column is-two-fifths has-background-light", :left; style = colstyle),
+            node("div", className = "column", :right; style = colstyle),
         )
     end
 end
