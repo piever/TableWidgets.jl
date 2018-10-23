@@ -8,9 +8,8 @@ gr()
 
 # Here we see how to compose widgets. First we create something similar to pipeline:
 
-function datapipeline(df)
+function datapipeline(df; loader = nothing) # loader here is a placeholder, we'll fill it later with a loader with an appropriate callback
     df isa AbstractObservable || (df = Observable{Any}(df))
-    loader = filepicker()
     filter = selectors(df)
     editor = dataeditor(map(DataFrame, filter))
 
@@ -32,8 +31,8 @@ function visualizer(df)
     )
 end
 
-function myui(df)
-    leftpane = datapipeline(df)
+function myui(df; kwargs...)
+    leftpane = datapipeline(df; kwargs...)
     rightpane = visualizer(leftpane)
     wdg = Widget(
         OrderedDict("left" => leftpane, "right" => rightpane);
@@ -50,10 +49,12 @@ function myui(df)
     end
 end
 
-# Now that we have an analysis widget, we can add some visualizations
 function myui()
-    wdg = filepicker()
-    widget(myui∘CSV.read, wdg, init = wdg) # initialize the widget as a filepicker, when the filepicker gets used, replace with the output of `myui` called with the loaded table
+    loader = filepicker()
+    ui = Observable{Any}(loader)
+    # initialize the widget as a filepicker, when the filepicker gets used, replace with the output of `myui` called with the loaded table
+    @map! ui myui(CSV.read(&loader), loader = loader)
+    WebIO.render(ui)
 end
 
 w = Window()
