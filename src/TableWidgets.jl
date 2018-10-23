@@ -12,7 +12,7 @@ import DataStructures: reset!
 
 using MacroTools
 
-export categoricalselector, rangeselector, selector
+export categoricalselector, rangeselector, selector, selectors
 export dataeditor, addfilter
 
 include("utils.jl")

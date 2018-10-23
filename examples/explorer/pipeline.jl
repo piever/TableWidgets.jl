@@ -26,4 +26,5 @@ end
 
 ##
 
-display(mypipeline())
+w = Window()
+body!(w, mypipeline())
