@@ -60,7 +60,7 @@ end
 label!(v, ::Nothing) = v
 function label!(v::Widget, l::AbstractString)
     v[:label] = l
-    g = layout(v)
+    g = Widgets.layout(v)
     Widget(v, layout = x -> Widgets.div(x[:label], g(x)))
 end
 

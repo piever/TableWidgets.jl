@@ -1,10 +1,3 @@
-# To be replaced by the equivalent
-_filter(t) = t
-function _filter(t, args...)
-    mask = [all(i) for i in zip(args...)]
-    map(x -> x[mask], Tables.columntable(t))
-end
-
 """
 `addfilter(t; readout = true)`
 

@@ -1,5 +1,12 @@
 lazymap(f, v) = (f(i) for i in v)
 
+# To be replaced by the equivalent operations in TableOperators
+_filter(t) = t
+function _filter(t, args...)
+    mask = [all(i) for i in zip(args...)]
+    map(x -> x[mask], Tables.columntable(t))
+end
+
 @enum ColumnStyle categorical numerical arbitrary
 
 const selectordict = Dict(
@@ -31,7 +38,7 @@ function selectors(t; threshold = 10, defaultstyle = TableWidgets.defaultstyle)
 
     for (name, col) in pairs(cols)
         sel_func = defaultselector(name, col, threshold)
-        sel = sel_func(col, lazymap; label = string(name))
+        sel = toggled(sel_func(col, lazymap; label = string(name), readout = false))
         push!(wdg[widgettype(sel)], sel)
     end
 
