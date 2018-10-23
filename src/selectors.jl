@@ -33,14 +33,15 @@ defaultselector(args...) = selectordict[defaultstyle(args...)]
 function selectors(t; threshold = 10, defaultstyle = TableWidgets.defaultstyle)
     cols = Tables.columntable(t)
 
-    wdg = Widget{:selectors}()
-    foreach(sym -> wdg[sym] = Widget{sym}[], selectortypes)
+    sel_dict = OrderedDict(sym => Widget[] for sym in selectortypes)
 
     for (name, col) in pairs(cols)
         sel_func = defaultselector(name, col, threshold)
-        sel = toggled(sel_func(col, lazymap; label = string(name), readout = false))
-        push!(wdg[widgettype(sel)], sel)
+        sel = sel_func(col, lazymap; label = string(name))
+        push!(sel_dict[widgettype(sel)], toggled(sel, readout = false))
     end
+
+    wdg = Widget{:selectors}(sel_dict)
 
     layout!(wdg) do x
         cols = [node(
