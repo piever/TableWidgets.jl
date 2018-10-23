@@ -52,7 +52,8 @@ end
 # Now that we have an analysis widget, we can add some visualizations
 function myui()
     wdg = filepicker()
-    widget(myui.read, wdg, init = wdg) # initialize the widget as a filepicker, when the filepicker gets used, replace with the output of `myui` called with the loaded table
+    widget(myui∘CSV.read, wdg, init = wdg) # initialize the widget as a filepicker, when the filepicker gets used, replace with the output of `myui` called with the loaded table
 end
 
-myui()
+w = Window()
+body!(w, myui())
