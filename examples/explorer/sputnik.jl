@@ -1,4 +1,5 @@
 using TableWidgets, Interact, CSV, Blink, Observables
+using StatPlots
 import DataFrames: DataFrame
 import StatPlots: dataviewer
 import TableView: showtable
