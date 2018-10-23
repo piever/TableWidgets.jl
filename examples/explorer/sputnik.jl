@@ -1,5 +1,6 @@
 using TableWidgets, Interact, CSV, Blink, Observables
-using StatPlots, TableView
+import StatPlots: dataviewer
+import TableView: showtable
 import Observables: AbstractObservable, @map!
 import Widgets: components
 gr()
@@ -25,7 +26,7 @@ end
 function visualizer(df)
     df isa AbstractObservable || (df = Observable{Any}(df))
     wdg = Widget{:visualizer}(
-        OrderedDict("TableView" => showtable(df), "StatPlots" => dataviewer(df));
+        OrderedDict("TableView" => map(showtable, df), "StatPlots" => dataviewer(df));
         output = df,
         layout = x -> tabulator(components(x)) # As layout, we put all the components in separate tabs
     )
@@ -43,8 +44,8 @@ function myui(df)
         node(
             "div",
             className = "columns",
-            node("div", className = "columns", :left),
-            node("div", className = "columns", :right),
+            node("div", className = "column", :left),
+            node("div", className = "column", :right),
         )
     end
 end
