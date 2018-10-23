@@ -1,10 +1,3 @@
-# To be replaced by the equivalent
-_filter(t) = t
-function _filter(t, args...)
-    mask = [all(i) for i in zip(args...)]
-    map(x -> x[mask], Tables.columntable(t))
-end
-
 """
 `addfilter(t; readout = true)`
 
@@ -15,9 +8,9 @@ function addfilter(t, r = 6; readout = true)
     t isa AbstractObservable || (t = Observable{Any}(t))
 
     wdg = Widget{:addfilter}(output = Observable{Any}(t[]))
-    cols = map(Tables.columns, t)
+    cols = map(Tables.columntable, t)
 
-    wdg[:cols] = dropdown(map(collect∘propertynames, t), placeholder = "Column to filter", value = nothing)
+    wdg[:cols] = dropdown(map(collect∘propertynames, cols), placeholder = "Column to filter", value = nothing)
 
     selectoptions = OrderedDict(
         "categorical" => categoricalselector,
@@ -33,16 +26,15 @@ function addfilter(t, r = 6; readout = true)
     container = Widgets.div(className = "columns is-multiline is-mobile")
     wdg[:selectors] = notifications([], wrap = wrap, container = container)
 
-    lazymap(f, v) = (f(i) for i in v)
     @on begin
         &wdg[:button]
-        push!(wdg[:selectors][], wdg[:selectortype][](t[], wdg[:cols][], lazymap))
+        push!(wdg[:selectors][], wdg[:selectortype][](cols[], wdg[:cols][], lazymap))
         wdg[:selectors][] = wdg[:selectors][]
     end
 
-    on(observe(wdg[:filter])) do x
+    on(wdg[:filter]) do x
         sels = (observe(i)[] for i in observe(wdg[:selectors])[])
-        wdg.output[] = _filter(t[], sels...)
+        wdg.output[] = _filter(cols[], sels...)
     end
 
     @layout! wdg Widgets.div(
