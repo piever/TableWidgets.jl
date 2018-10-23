@@ -1,0 +1,5 @@
+[deps]
+DataFrames = "a93c6f00-e57d-5684-b7b6-d8193f3e46c0"
+Interact = "c601a237-2ae4-5e1e-952c-7a85b0c7eef1"
+TableWidgets = "268f3104-2f76-5809-89e2-da1643c99191"
+Tables = "bd369af6-aec1-5ad0-b16a-f7cc5008161c"

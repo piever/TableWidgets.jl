@@ -1,0 +1,6 @@
+[deps]
+Blink = "ad839575-38b3-5650-b840-f874b8c74a25"
+CSV = "336ed68f-0bac-5ca0-87d4-7b16caf5d00b"
+Interact = "c601a237-2ae4-5e1e-952c-7a85b0c7eef1"
+StatPlots = "60ddc479-9b66-56df-82fc-76a74619b69c"
+TableWidgets = "268f3104-2f76-5809-89e2-da1643c99191"
