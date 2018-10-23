@@ -1,4 +1,5 @@
 using TableWidgets, Interact, CSV, Blink, Observables
+import DataFrames: DataFrame
 import StatPlots: dataviewer
 import TableView: showtable
 import Observables: AbstractObservable, @map!
@@ -10,9 +11,8 @@ gr()
 function datapipeline(df)
     df isa AbstractObservable || (df = Observable{Any}(df))
     loader = filepicker()
-    @map! df CSV.read(&loader) # replace df if user is loading new data
     filter = selectors(df)
-    editor = dataeditor(filter)
+    editor = dataeditor(map(DataFrame, filter))
 
     wdg = Widget{:datapipeline}(
         OrderedDict("load" => loader, "filter" => filter, "edit" => editor);
