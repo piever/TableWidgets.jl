@@ -1,6 +1,6 @@
 function format(x)
     io = IOBuffer()
-    show(IOContext(io, :compact => true), x)
+    show(IOContext(io, :compact => true, :typeinfo => typeof(x)), x)
     String(take!(io))
 end
 
