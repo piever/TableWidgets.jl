@@ -15,6 +15,8 @@ using MacroTools
 export categoricalselector, rangeselector, selector, selectors
 export dataeditor, addfilter
 
+const examplefolder = joinpath(@__DIR__, "..", "examples")
+
 include("utils.jl")
 include("selector.jl")
 include("selectors.jl")
