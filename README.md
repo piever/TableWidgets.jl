@@ -17,3 +17,5 @@ Pkg.activate(joinpath(examplefolder, "explorer"))
 Pkg.instantiate()
 include(joinpath(examplefolder, "explorer", "sputnik.jl"))
 ```
+
+![tablewidgetsdemo](https://user-images.githubusercontent.com/6333339/47428394-0343c880-d78b-11e8-85b6-ec701a84d630.png)
