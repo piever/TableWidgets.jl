@@ -54,7 +54,7 @@ function myui()
     loader = filepicker()
     ui = Observable{Any}(loader)
     # initialize the widget as a filepicker, when the filepicker gets used, replace with the output of `myui` called with the loaded table
-    @map! ui myui(CSV.read(&loader), loader = loader)
+    @map! ui myui(CSV.read(&loader, allowmissing = :none), loader = loader)
     WebIO.render(ui)
 end
 
