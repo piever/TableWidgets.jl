@@ -1,4 +1,4 @@
-using TableWidgets, Interact, StatPlots, CSV, Blink
+using TableWidgets, Interact, StatsPlots, CSV, Blink
 gr()
 
 function mypipeline(t)
