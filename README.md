@@ -13,7 +13,7 @@ To run the examples, you need to activate the respective folder and instantiate 
 ```julia
 import Pkg
 import TableWidgets: examplefolder
-Pkg.activate(joinpath(examplefolder, "explorer"))
+Pkg.activate(examplefolder)
 Pkg.instantiate()
 include(joinpath(examplefolder, "explorer", "sputnik.jl"))
 ```

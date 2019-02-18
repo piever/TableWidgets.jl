@@ -1,8 +1,7 @@
 using TableWidgets, Interact, CSV, Blink, Observables
-using StatPlots
+using StatsPlots
 import DataFrames: DataFrame
 import StatPlots: dataviewer
-import TableView: showtable
 import Observables: AbstractObservable, @map!
 import Widgets: components
 gr()
@@ -22,11 +21,16 @@ function datapipeline(df; loader = nothing) # loader here is a placeholder, we'l
 end
 
 # Here we create the graphical part, combining existing widgets from the Julia ecosystem
-# In this case I'm taking the spreadsheet visualizer from TableView and the UI from StatPlots
+# In this case I'm taking the spreadsheet visualizer from TableWidgets and the UI from StatsPlots
 function visualizer(df)
     df isa AbstractObservable || (df = Observable{Any}(df))
+    showtable = node(
+        :div,
+        TableWidgets.head(df, 1000),
+        style = Dict("overflow" => "scroll", "height" => "80vh")
+    )
     wdg = Widget{:visualizer}(
-        OrderedDict("TableView" => map(showtable, df), "StatPlots" => dataviewer(df));
+        OrderedDict("Table" => showtable, "StatPlots" => dataviewer(df));
         output = df,
         layout = x -> tabulator(components(x)) # As layout, we put all the components in separate tabs
     )
