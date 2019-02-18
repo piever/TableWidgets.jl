@@ -30,7 +30,7 @@ defaultstyle(name::Symbol, col, n) = hasdistinct(col, n) ? arbitrary : categoric
 
 defaultselector(args...) = selectordict[defaultstyle(args...)]
 
-function selectors(t; threshold = 10, defaultstyle = TableWidgets.defaultstyle)
+function selectors(t, obs::AbstractObservable; threshold = 10, defaultstyle = TableWidgets.defaultstyle)
     t isa AbstractObservable || (t = Observable{Any}(t))
     cols = @map Tables.columntable(&t)
     output = Observable{Any}(cols[])
@@ -57,11 +57,10 @@ function selectors(t; threshold = 10, defaultstyle = TableWidgets.defaultstyle)
 
     wdg = Widget{:selectors}(sel_dict; output = output)
 
-    wdg[:filter] = button("Filter")
-    on(wdg[:filter]) do _
+    on(obs) do _
         selwdgs = Iterators.flatten(wdg[seltyp][] for seltyp in selectortypes)
         sels = (i[] for i in selwdgs if i[:toggle][])
-        output[] = _filter(cols[], sels...)
+        output[] = Tables.materializer(t)(_filter(cols[], sels...))
     end
 
     layout!(wdg) do x
@@ -72,6 +71,14 @@ function selectors(t; threshold = 10, defaultstyle = TableWidgets.defaultstyle)
             @map(node(:div, &x[typ]...))
         ) for typ in selectortypes]
         filters = node(:div, className = "columns", sel_cols...)
-        node(:div, x[:filter], filters)
+    end
+end
+
+function selectors(t; kwargs...)
+    btn = button("Filter")
+    wdg = selectors(t, btn; kwargs...)
+    wdg[:filter] = btn
+    layout(wdg) do x
+        node(:div, wdg[:filter], x)
     end
 end
