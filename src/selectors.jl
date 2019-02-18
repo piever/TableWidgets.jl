@@ -60,7 +60,7 @@ function selectors(t, obs::AbstractObservable; threshold = 10, defaultstyle = Ta
     on(obs) do _
         selwdgs = Iterators.flatten(wdg[seltyp][] for seltyp in selectortypes)
         sels = (i[] for i in selwdgs if i[:toggle][])
-        output[] = Tables.materializer(t)(_filter(cols[], sels...))
+        output[] = Tables.materializer(t[])(_filter(cols[], sels...))
     end
 
     layout!(wdg) do x
