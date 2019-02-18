@@ -78,7 +78,7 @@ function selectors(t; kwargs...)
     btn = button("Filter")
     wdg = selectors(t, btn; kwargs...)
     wdg[:filter] = btn
-    layout(wdg) do x
+    Widgets.layout(wdg) do x
         node(:div, wdg[:filter], x)
     end
 end
