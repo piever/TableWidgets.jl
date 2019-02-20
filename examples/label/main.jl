@@ -1,8 +1,8 @@
-using DataFrames, Interact, TableWidgets, Tables, Blink
+using JuliaDB, Interact, TableWidgets, Tables, Blink
 using Observables: @map
 
-# Pass a DataFrame with the last column containing only strings
-function label!(t::DataFrame; categories=[""])
+# Pass a table with the last column containing only strings
+function label!(t; categories=[""])
 
     category_vec = last(Tables.columntable(t))
     category_obs = Observable{Any}(category_vec)
@@ -28,7 +28,7 @@ end
 
 # Annotate your expenses / income from a set of categories (the set of categories
 # increases every time you type one manually)
-df = DataFrame(Place = ["home", "home", "work"], Amount = [-12.3, -1.2, 1400], Category = ["", "", ""])
+df = table((Place = ["home", "home", "work"], Amount = [-12.3, -1.2, 1400], Category = ["", "", ""]))
 t = label!(df, categories = ["Food", "Coffe", "Salary"])
 
 w = Window()

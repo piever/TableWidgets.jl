@@ -1,6 +1,5 @@
-using TableWidgets, Interact, CSV, Blink, Observables
+using TableWidgets, Interact, JuliaDB, Blink, Observables
 using StatsPlots
-import DataFrames: DataFrame
 import StatPlots: dataviewer
 import Observables: AbstractObservable, @map!
 import Widgets: components
@@ -11,7 +10,7 @@ gr()
 function datapipeline(df; loader = nothing) # loader here is a placeholder, we'll fill it later with a loader with an appropriate callback
     df isa AbstractObservable || (df = Observable{Any}(df))
     filter = selectors(df)
-    editor = dataeditor(map(DataFrame, filter))
+    editor = dataeditor(filter)
 
     wdg = Widget{:datapipeline}(
         OrderedDict("load" => loader, "filter" => filter, "edit" => editor);
@@ -58,7 +57,7 @@ function myui()
     loader = filepicker()
     ui = Observable{Any}(loader)
     # initialize the widget as a filepicker, when the filepicker gets used, replace with the output of `myui` called with the loaded table
-    @map! ui myui(CSV.read(&loader, allowmissing = :none), loader = loader)
+    @map! ui myui(loadtable(&loader), loader = loader)
     WebIO.render(ui)
 end
 

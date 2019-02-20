@@ -1,4 +1,4 @@
-using TableWidgets, Interact, StatsPlots, CSV, Blink, DataFrames
+using TableWidgets, Interact, StatsPlots, JuliaDB, Blink
 gr()
 
 function mypipeline(t)
@@ -21,7 +21,7 @@ end
 
 function mypipeline()
     wdg = filepicker()
-    widget(mypipeline∘CSV.read, wdg, init = wdg) # initialize the widget as a filepicker, when the filepicker gets used, replace with the output of `mypipeline` called with the loaded table
+    widget(mypipeline∘loadtable, wdg, init = wdg) # initialize the widget as a filepicker, when the filepicker gets used, replace with the output of `mypipeline` called with the loaded table
 end
 
 ##
