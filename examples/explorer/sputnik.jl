@@ -1,6 +1,6 @@
 using TableWidgets, Interact, JuliaDB, Blink, Observables
 using StatsPlots
-import StatPlots: dataviewer
+import StatsPlots: dataviewer
 import Observables: AbstractObservable, @map!
 import Widgets: components
 gr()
@@ -29,7 +29,7 @@ function visualizer(df)
         style = Dict("overflow" => "scroll", "height" => "80vh")
     )
     wdg = Widget{:visualizer}(
-        OrderedDict("Table" => showtable, "StatPlots" => dataviewer(df));
+        OrderedDict("Table" => showtable, "StatsPlots" => dataviewer(df));
         output = df,
         layout = x -> tabulator(components(x)) # As layout, we put all the components in separate tabs
     )
