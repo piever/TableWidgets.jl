@@ -3,7 +3,6 @@ using StatsPlots
 import StatsPlots: dataviewer
 import Observables: AbstractObservable, @map!
 import Widgets: components
-gr()
 
 # Here we see how to compose widgets. First we create something similar to pipeline:
 

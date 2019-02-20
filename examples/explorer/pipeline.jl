@@ -1,5 +1,4 @@
 using TableWidgets, Interact, StatsPlots, JuliaDB, Blink
-gr()
 
 function mypipeline(t)
     (t isa Observables.AbstractObservable) || (t = Observable{Any}(t))
