@@ -32,9 +32,8 @@ defaultselector(args...) = selectordict[defaultstyle(args...)]
 
 function selectors(t, obs::AbstractObservable; threshold = 10, defaultstyle = TableWidgets.defaultstyle)
     t isa AbstractObservable || (t = Observable{Any}(t))
-    cols = @map Tables.columntable(&t)
-    output = Observable{Any}(Tables.materializer(t[])(cols[]))
-    connect!(cols, output)
+    cols = map(Tables.columntable, t)
+    output = map(x -> Tables.materializer(t[])(x), cols)
 
     sel_dict = OrderedDict(sym => Observable{Any}(Widget[]) for sym in selectortypes)
 
