@@ -7,7 +7,7 @@ function _filter(t, args...)
     map(x -> x[mask], Tables.columntable(t))
 end
 
-@enum ColumnStyle categorical numerical arbitrary
+@enum ColumnType categorical numerical arbitrary
 
 const selectordict = Dict(
     categorical => categoricalselector,
@@ -25,12 +25,14 @@ function hasdistinct(col, n)
     return false
 end
 
-defaultstyle(name::Symbol, col::AbstractVector{<:Union{Missing, Real}}, n) = hasdistinct(col, n) ? numerical : categorical
-defaultstyle(name::Symbol, col, n) = hasdistinct(col, n) ? arbitrary : categorical
+struct DefaultType
+    threshold::Int
+end
 
-defaultselector(args...) = selectordict[defaultstyle(args...)]
+(d::DefaultType)(col::AbstractVector{<:Union{Missing, Real}}) = hasdistinct(col, d.threshold) ? numerical : categorical
+(d::DefaultType)(col::AbstractVector) = hasdistinct(col, d.threshold) ? arbitrary : categorical
 
-function selectors(t, obs::AbstractObservable; threshold = 10, defaultstyle = TableWidgets.defaultstyle)
+function selectors(t, obs::AbstractObservable; types = Dict(), threshold = 10, default_type = DefaultType(threshold))
     t isa AbstractObservable || (t = Observable{Any}(t))
     cols = map(Tables.columntable, t)
     output = map(x -> Tables.materializer(t[])(x), cols)
@@ -42,7 +44,7 @@ function selectors(t, obs::AbstractObservable; threshold = 10, defaultstyle = Ta
             empty!(sel_dict[sym][])
         end
         for (name, col) in pairs(x)
-            sel_func = defaultselector(name, col, threshold)
+            sel_func = selectordict[get(types, name, default_type(col))]
             sel = sel_func(col, lazymap)
             push!(sel_dict[widgettype(sel)][], toggled(sel; label = string(name), readout = false))
         end
