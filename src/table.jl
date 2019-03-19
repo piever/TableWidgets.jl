@@ -25,7 +25,7 @@ function render_row_iterator(t;
 
     first_row = row(fr, 1; format = format)
     body = node("tbody", first_row, (row(r, i+1; format = format) for (i, r) in enumerate(lr))...)
-    className = "table $className"
+    className = "table interact-widget $className"
     n = slap_design!(node("table", headers, body, className = className))
 end
 
