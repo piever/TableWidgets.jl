@@ -40,7 +40,8 @@ function addfilter(t, r = 6; readout = true)
     @layout! wdg Widgets.div(
         Widgets.div(className = "level is-mobile", map(Widgets.div(className="level-item"), [:cols, :selectortype, :button, :filter])...),
         :selectors,
-        toggled(head(_.output, r), readout = true)
+        toggled(head(_.output, r), readout = true),
+        className = "interact-widget"
     )
     on(t) do x
         observe(wdg, :selectors)[] = []
