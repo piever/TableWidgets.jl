@@ -34,7 +34,7 @@ function addfilter(t, r = 6; readout = true)
 
     on(wdg[:filter]) do x
         sels = (observe(i)[] for i in observe(wdg[:selectors])[])
-        wdg.output[] = _filter(cols[], sels...)
+        wdg.output[] = Tables.materializer(t[])(_filter(cols[], sels...))
     end
 
     @layout! wdg Widgets.div(
