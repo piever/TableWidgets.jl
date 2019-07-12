@@ -35,7 +35,7 @@ function rangeselector(v::AbstractArray{<:Union{Real, Missing}}, f=filter;
     output = map(t -> f(func, v), changes)
     wdg = Widget{:rangeselector}(data, output=output)
     @layout! wdg :extrema
-    TableWidgets.label!(wdg, label)
+    label!(wdg, label)
 end
 
 """
