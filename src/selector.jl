@@ -22,7 +22,7 @@ a filtered version of `v`: use `rangeselector(v, map)` to get the boolean vector
 selected. Missing data is excluded from the range automatically.
 """
 function rangeselector(v::AbstractArray{<:Union{Real, Missing}}, f=filter;
-    digits=6, vskip=1em, min=minimum(skipmissing(v)), max=maximum(skipmissing(v)), n=50, label=nothing, kwargs...)
+    digits=6, vskip=1em, min=minimum(skipmissing(v[.!isnan.(v)])), max=maximum(skipmissing(v[.!isnan.(v)])), n=50, label=nothing, kwargs...)
 
     min = floor(min, digits=digits)
     max = ceil(max, digits=digits)
@@ -35,7 +35,7 @@ function rangeselector(v::AbstractArray{<:Union{Real, Missing}}, f=filter;
     output = map(t -> f(func, v), changes)
     wdg = Widget{:rangeselector}(data, output=output)
     @layout! wdg :extrema
-    label!(wdg, label)
+    TableWidgets.label!(wdg, label)
 end
 
 """
