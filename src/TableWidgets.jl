@@ -12,6 +12,7 @@ import DataStructures: reset!
 
 using MacroTools
 using NaNMath
+using Dates
 
 export categoricalselector, rangeselector, selector, selectors
 export dataeditor, addfilter
