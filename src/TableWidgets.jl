@@ -11,6 +11,7 @@ using DataStructures
 import DataStructures: reset!
 
 using MacroTools
+using NaNMath
 
 export categoricalselector, rangeselector, selector, selectors
 export dataeditor, addfilter

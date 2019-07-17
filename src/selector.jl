@@ -22,7 +22,7 @@ a filtered version of `v`: use `rangeselector(v, map)` to get the boolean vector
 selected. Missing data is excluded from the range automatically.
 """
 function rangeselector(v::AbstractArray{<:Union{Real, Missing}}, f=filter;
-    digits=6, vskip=1em, mask = .!isnan.(v), min=minimum(skipmissing(v[mask])), max=maximum(skipmissing(v[mask])), n=50, label=nothing, kwargs...)
+    digits=6, vskip=1em, min=NaNMath.minimum(skipmissing(v)), max=NaNMath.maximum(skipmissing(v)), n=50, label=nothing, kwargs...)
 
     min = floor(min, digits=digits)
     max = ceil(max, digits=digits)
@@ -37,6 +37,24 @@ function rangeselector(v::AbstractArray{<:Union{Real, Missing}}, f=filter;
     @layout! wdg :extrema
     label!(wdg, label)
 end
+
+function rangeselector(v::AbstractArray{<:Union{Date, Missing}}, f=filter;
+    digits=6, vskip=1em, min = minimum(skipmissing(v)), max =.maximum(skipmissing(v)), n=50, label=nothing, kwargs...)
+
+    min = floor(min, digits=digits)
+    max = ceil(max, digits=digits)
+    step = round((max-min)/n, sigdigits=digits)
+    range = min:step:(max+step)
+    extrema = InteractBase.rangepicker(range; kwargs...)
+    changes = extrema[:changes]
+    func = t -> !ismissing(t) && ((min, max) = extrema[]; min <= t <= max)
+    data = [:extrema => extrema, :changes => changes, :function => func]
+    output = map(t -> f(func, v), changes)
+    wdg = Widget{:rangeselector}(data, output=output)
+    @layout! wdg :extrema
+    label!(wdg, label)
+end
+
 
 """
 `selector(v::AbstractArray, f=filter)`
