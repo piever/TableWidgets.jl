@@ -49,4 +49,4 @@ function undo!(obs::Observable, stack, exclude)
     obs
 end
 
-skipnan(v) = filter(!isnan,v)
+skipnan(v) = Iterators.filter(!isnan,v)
