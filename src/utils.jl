@@ -49,5 +49,4 @@ function undo!(obs::Observable, stack, exclude)
     obs
 end
 
-
-skipNaN(v) = filter(!isnan,v)
+skipnan(v) = filter(!isnan,v)
