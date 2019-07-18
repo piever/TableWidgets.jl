@@ -48,3 +48,5 @@ function undo!(obs::Observable, stack, exclude)
     Observables.setexcludinghandlers(obs, last(stack), t -> t != exclude)
     obs
 end
+
+skipnan(v) = Iterators.filter(!isnan,v)
