@@ -48,3 +48,6 @@ function undo!(obs::Observable, stack, exclude)
     Observables.setexcludinghandlers(obs, last(stack), t -> t != exclude)
     obs
 end
+
+
+skipNaN(v) = filter(!isnan,v)
