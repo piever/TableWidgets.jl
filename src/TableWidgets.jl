@@ -6,9 +6,7 @@ using IterTools
 import Observables: AbstractObservable, @map, @map!, @on
 import Widgets: AbstractWidget, components, widgettype, layout!
 
-import InteractBulma
-using DataStructures
-import DataStructures: reset!
+using OrderedCollections
 
 using MacroTools
 
