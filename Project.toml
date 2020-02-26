@@ -1,0 +1,30 @@
+name = "TableWidgets"
+uuid = "b97313a1-7d5f-5481-80a2-59ff1cf30f79"
+authors = ["Pietro Vertechi <pietro.vertechi@neuro.fchampalimaud.org>"]
+version = "0.1.0"
+
+[deps]
+CSSUtil = "70588ee8-6100-5070-97c1-3cb50ed05fe8"
+DataStructures = "864edb3b-99cc-5e75-8d2d-829cb0a9cfe8"
+InteractBase = "d3863d7c-f0c8-5437-a7b4-3ae773c01009"
+InteractBulma = "7981ab7d-5bfa-5e03-9ec9-f3d4afc0a1ca"
+IterTools = "c8e1da08-722c-5040-9ed9-7db0dc04731e"
+MacroTools = "1914dd2f-81c6-5fcd-8719-6d5c9610ff09"
+Observables = "510215fc-4207-5dde-b226-833fc4488ee2"
+Tables = "bd369af6-aec1-5ad0-b16a-f7cc5008161c"
+WebIO = "0f1e0344-ec1d-5b48-a673-e5cf874b6c29"
+Widgets = "cc8bc4a8-27d6-5769-a93b-9d913e69aa62"
+
+[compat]
+IterTools = "1"
+Observables = "0.2, 0.3"
+Tables = "0.2, 1"
+Widgets = "0.6"
+julia = "1"
+
+[extras]
+Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+DataFrames = "a93c6f00-e57d-5684-b7b6-d8193f3e46c0"
+
+[targets]
+test = ["Test", "DataFrames"]
